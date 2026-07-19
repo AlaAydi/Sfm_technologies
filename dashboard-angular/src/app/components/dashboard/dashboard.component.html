@@ -1,0 +1,232 @@
+<section class="dashboard-layout">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="dashboard-header">
+    <div class="header-brand">
+      <div class="brand-icon">💧</div>
+      <div>
+        <h1 class="brand-title gradient-text">Droppy</h1>
+        <span class="brand-subtitle">Détection Intelligente de Fuites</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="triggerAnalysis()">
+        <span>⚡</span> Analyser Maintenant
+      </button>
+
+      <div class="alerts-btn-wrapper">
+        <button class="btn-alerts" (click)="clearAlerts()">
+          <span>🔔</span>
+          <span>Alertes</span>
+          @if (unreadCount() > 0) {
+            <span class="badge-pulse">{{ unreadCount() }}</span>
+          }
+        </button>
+      </div>
+
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>En direct</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-body">
+
+    <!-- ==================== STATS ROW ==================== -->
+    <div class="stats-row fade-in-up">
+      <div class="stat-card glass-card">
+        <div class="stat-icon" style="background: rgba(252, 129, 129, 0.15)">
+          <span>🚨</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Anomalies (page)</span>
+          <span class="stat-value" style="color: var(--severity-high)">{{ totalElements() }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card glass-card">
+        <div class="stat-icon" style="background: rgba(252, 129, 129, 0.1)">
+          <span>🔴</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Haute Sévérité</span>
+          <span class="stat-value" style="color: var(--severity-high)">{{ highCount() }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card glass-card">
+        <div class="stat-icon" style="background: rgba(246, 173, 85, 0.1)">
+          <span>🟠</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Sévérité Moyenne</span>
+          <span class="stat-value" style="color: var(--severity-medium)">{{ mediumCount() }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card glass-card">
+        <div class="stat-icon" style="background: rgba(99, 179, 237, 0.1)">
+          <span>🆕</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Non Traitées</span>
+          <span class="stat-value" style="color: var(--accent-blue)">{{ newCount() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== VISUALS (MAP & CHART) ==================== -->
+    <div class="visuals-grid fade-in-up">
+      <app-leak-map [anomalies]="anomalies()"></app-leak-map>
+      <app-leak-chart [anomalies]="anomalies()"></app-leak-chart>
+    </div>
+
+    <!-- ==================== LIVE ALERTS ==================== -->
+    @if (liveAlerts().length > 0) {
+      <div class="live-alerts-bar fade-in-up">
+        <div class="live-bar-header">
+          <span class="live-dot"></span>
+          <strong>Alertes Temps Réel</strong>
+        </div>
+        <div class="live-alerts-list">
+          @for (alert of liveAlerts(); track alert.id) {
+            <div class="live-alert-item" [class.live-alert-high]="alert.severity === 'HIGH'">
+              <span>{{ getTypeIcon(alert.type) }}</span>
+              <span class="badge" [ngClass]="getSeverityClass(alert.severity)">{{ alert.severity }}</span>
+              <span>{{ alert.type }}</span>
+              <span class="text-muted">{{ alert.mac }}</span>
+              <span class="text-muted">{{ formatDate(alert.startAt) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ==================== FILTERS ==================== -->
+    <div class="filters-section glass-card fade-in-up">
+      <h2 class="section-title">🔍 Filtres</h2>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label>Adresse MAC</label>
+          <input type="text" class="input-field" [(ngModel)]="filterMac" placeholder="ex: 1C:69:20:35:73:C4">
+        </div>
+
+        <div class="filter-group">
+          <label>Statut</label>
+          <select class="input-field" [(ngModel)]="filterStatus">
+            <option value="">Tous les statuts</option>
+            <option value="NEW">Nouveau</option>
+            <option value="CONFIRMED">Confirmé</option>
+            <option value="FALSE_POSITIVE">Faux positif</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Sévérité</label>
+          <select class="input-field" [(ngModel)]="filterSeverity">
+            <option value="">Toutes les sévérités</option>
+            <option value="HIGH">Haute</option>
+            <option value="MEDIUM">Moyenne</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn-primary" (click)="applyFilters()">✓ Appliquer</button>
+          <button class="btn-ghost" (click)="resetFilters()">✕ Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ANOMALIES TABLE ==================== -->
+    <div class="table-section glass-card fade-in-up">
+      <div class="table-header">
+        <h2 class="section-title">📋 Anomalies Détectées</h2>
+        <span class="result-count">{{ totalElements() }} résultats</span>
+      </div>
+
+      @if (loading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Chargement des données...</p>
+        </div>
+      } @else if (anomalies().length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">✅</span>
+          <p>Aucune anomalie détectée</p>
+          <p class="text-muted">Le système surveille vos capteurs en temps réel</p>
+        </div>
+      } @else {
+        <div class="table-wrapper">
+          <table class="anomalies-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>MAC Adresse</th>
+                <th>Score</th>
+                <th>Sévérité</th>
+                <th>Statut</th>
+                <th>Début</th>
+                <th>Fin</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (anomaly of anomalies(); track anomaly.id) {
+                <tr class="table-row" [class.row-high]="anomaly.severity === 'HIGH'">
+                  <td class="type-cell">
+                    <span class="type-icon">{{ getTypeIcon(anomaly.type) }}</span>
+                    <span class="type-label">{{ anomaly.type }}</span>
+                  </td>
+                  <td class="mac-cell">
+                    <code>{{ anomaly.mac }}</code>
+                  </td>
+                  <td>
+                    <div class="score-bar-wrapper">
+                      <div class="score-bar" [style.width.%]="anomaly.score * 100"
+                           [class.score-high]="anomaly.score > 0.7"
+                           [class.score-medium]="anomaly.score > 0.4 && anomaly.score <= 0.7"
+                           [class.score-low]="anomaly.score <= 0.4"></div>
+                      <span class="score-value">{{ (anomaly.score * 100).toFixed(0) }}%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getSeverityClass(anomaly.severity)">
+                      {{ anomaly.severity }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusClass(anomaly.status)">
+                      {{ anomaly.status }}
+                    </span>
+                  </td>
+                  <td class="date-cell">{{ formatDate(anomaly.startAt) }}</td>
+                  <td class="date-cell">{{ formatDate(anomaly.endAt) }}</td>
+                  <td class="actions-cell">
+                    @if (anomaly.status === 'NEW') {
+                      <button class="btn-action btn-confirm" (click)="confirm(anomaly)" title="Confirmer la fuite">✓</button>
+                      <button class="btn-action btn-fp" (click)="markFalsePositive(anomaly)" title="Faux positif">✗</button>
+                    } @else {
+                      <span class="text-muted" style="font-size: 12px">Traité</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">← Préc.</button>
+          @for (p of pages; track p) {
+            <button class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p + 1 }}</button>
+          }
+          <button class="page-btn" [disabled]="currentPage >= totalPages() - 1" (click)="goToPage(currentPage + 1)">Suiv. →</button>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>

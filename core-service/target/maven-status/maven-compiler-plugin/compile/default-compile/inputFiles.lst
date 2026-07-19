@@ -1,0 +1,9 @@
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\config\WebSocketConfig.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\controller\DroppyAnomalyController.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\controller\ForecastProxyController.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\CoreServiceApplication.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\model\AnomalyStatus.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\model\DroppyAnomaly.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\repository\DroppyAnomalyRepository.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\scheduler\AnomalyScheduler.java
+C:\Users\Aydi Ala\Desktop\stage\core-service\src\main\java\com\sfm\connect\coreservice\service\DroppyAnomalyService.java

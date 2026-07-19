@@ -1,0 +1,12 @@
+com\sfm\connect\coreservice\repository\DroppyAnomalyRepository.class
+com\sfm\connect\coreservice\model\AnomalyStatus.class
+com\sfm\connect\coreservice\controller\ForecastProxyController.class
+com\sfm\connect\coreservice\CoreServiceApplication.class
+com\sfm\connect\coreservice\model\DroppyAnomaly.class
+com\sfm\connect\coreservice\service\DroppyAnomalyService.class
+com\sfm\connect\coreservice\service\DroppyAnomalyService$PredictResponse.class
+com\sfm\connect\coreservice\scheduler\AnomalyScheduler.class
+com\sfm\connect\coreservice\service\DroppyAnomalyService$AnomalyDto.class
+com\sfm\connect\coreservice\controller\DroppyAnomalyController.class
+com\sfm\connect\coreservice\config\WebSocketConfig.class
+com\sfm\connect\coreservice\controller\ForecastProxyController$1.class

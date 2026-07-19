@@ -1,0 +1,175 @@
+/* ========================================
+   Droppy Dashboard - Global Design System
+   Dark Mode | Premium UI | Glassmorphism
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables */
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(99, 179, 237, 0.3);
+
+  --accent-blue: #63b3ed;
+  --accent-cyan: #4fd1c5;
+  --accent-green: #68d391;
+  --accent-orange: #f6ad55;
+  --accent-red: #fc8181;
+  --accent-purple: #b794f4;
+
+  --severity-high: #fc8181;
+  --severity-medium: #f6ad55;
+  --severity-low: #68d391;
+
+  --text-primary: #f7fafc;
+  --text-secondary: #a0aec0;
+  --text-muted: #4a5568;
+
+  --gradient-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-teal: linear-gradient(135deg, #4fd1c5 0%, #63b3ed 100%);
+  --gradient-orange: linear-gradient(135deg, #f6ad55 0%, #fc8181 100%);
+  --gradient-green: linear-gradient(135deg, #68d391 0%, #4fd1c5 100%);
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.6);
+  --shadow-glow-blue: 0 0 20px rgba(99, 179, 237, 0.2);
+  --shadow-glow-red: 0 0 20px rgba(252, 129, 129, 0.2);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+/* Glass Card Utility */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Badge Utilities */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.badge-high {
+  background: rgba(252, 129, 129, 0.15);
+  color: var(--severity-high);
+  border: 1px solid rgba(252, 129, 129, 0.3);
+}
+
+.badge-medium {
+  background: rgba(246, 173, 85, 0.15);
+  color: var(--severity-medium);
+  border: 1px solid rgba(246, 173, 85, 0.3);
+}
+
+.badge-low {
+  background: rgba(104, 211, 145, 0.15);
+  color: var(--severity-low);
+  border: 1px solid rgba(104, 211, 145, 0.3);
+}
+
+.badge-new {
+  background: rgba(99, 179, 237, 0.15);
+  color: var(--accent-blue);
+  border: 1px solid rgba(99, 179, 237, 0.3);
+}
+
+.badge-confirmed {
+  background: rgba(252, 129, 129, 0.15);
+  color: var(--severity-high);
+  border: 1px solid rgba(252, 129, 129, 0.3);
+}
+
+.badge-fp {
+  background: rgba(160, 174, 192, 0.15);
+  color: var(--text-secondary);
+  border: 1px solid rgba(160, 174, 192, 0.2);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.7; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: var(--gradient-teal);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive Layout */
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
