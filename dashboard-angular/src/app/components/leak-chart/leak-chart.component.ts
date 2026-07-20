@@ -29,7 +29,12 @@ import { DroppyAnomaly } from '../../services/anomaly.service';
 })
 export class LeakChartComponent implements OnInit, OnChanges, OnDestroy {
   @Input() anomalies: DroppyAnomaly[] = [];
+private getSecureRandom(min: number, max: number): number {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
 
+  return min + (array[0] / 0xffffffff) * (max - min);
+}
   private chart: ApexCharts | null = null;
 
   ngOnInit(): void {
@@ -58,7 +63,8 @@ export class LeakChartComponent implements OnInit, OnChanges, OnDestroy {
 
     for (let i = 0; i < 24; i++) {
       const time = baseTime + i * 3600 * 1000;
-      let rate = 0.5 + Math.random() * 0.8;
+const random = this.getSecureRandom(0.5, 1.3);
+let rate = random;
       if (i >= 11 && i <= 14) rate += 2.5; 
       if (i >= 18 && i <= 21) rate += 3.0; 
       if (i >= 2 && i <= 5) rate += 1.8; 
