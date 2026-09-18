@@ -1,0 +1,854 @@
+% =============================================================================
+% CHAPITRE 2 — ANALYSE DES BESOINS ET CAHIER DES CHARGES
+% =============================================================================
+
+\chapter{Analyse des besoins et cahier des charges}
+
+% =============================================================================
+% 2.1 INTRODUCTION
+% =============================================================================
+
+\section{Introduction}
+
+Après avoir présenté dans le chapitre précédent le contexte général du
+projet Droppy, sa problématique ainsi que les objectifs poursuivis, ce
+chapitre est consacré à l'analyse des besoins et à la définition du cahier
+des charges de la solution.
+
+L'objectif de cette phase est de traduire le problème métier en exigences
+concrètes permettant de guider la conception et la réalisation de la
+plateforme. Il s'agit notamment d'identifier les utilisateurs concernés,
+les sources de données, les fonctionnalités attendues ainsi que les
+contraintes techniques et qualitatives auxquelles le système doit répondre.
+
+L'analyse commence par une étude du domaine de la gestion des réseaux d'eau
+et des problématiques liées aux fuites et aux comportements anormaux. Une
+étude de l'existant permet ensuite de mettre en évidence les limites des
+approches traditionnelles et de justifier la nécessité d'une supervision
+plus automatisée et intelligente.
+
+La vision fonctionnelle de Droppy est ensuite présentée afin de décrire la
+chaîne globale allant de la collecte des données jusqu'à leur analyse et à
+leur restitution à l'opérateur.
+
+Enfin, les acteurs du système, les besoins fonctionnels, les besoins non
+fonctionnels, les contraintes du projet ainsi que les critères de réussite
+sont définis afin de constituer le cahier des charges de la solution.
+
+% =============================================================================
+% 2.2 COMPRÉHENSION DU DOMAINE MÉTIER
+% =============================================================================
+
+\section{Compréhension du domaine métier}
+
+\subsection{Enjeux de la gestion des réseaux d'eau}
+
+La gestion efficace d'un réseau de distribution d'eau nécessite une
+surveillance régulière des différents équipements et des flux de
+consommation. Le gestionnaire doit être capable de suivre l'évolution des
+débits, des consommations ainsi que l'état des équipements afin
+d'identifier rapidement toute situation inhabituelle.
+
+Dans un réseau instrumenté, les capteurs permettent de transformer les
+équipements physiques en sources de données exploitables par une plateforme
+logicielle. La surveillance ne repose alors plus uniquement sur des
+inspections ponctuelles, mais peut s'appuyer sur une observation continue
+du comportement du réseau.
+
+Cette évolution présente un intérêt particulier dans le contexte de la
+détection des fuites. Une fuite non détectée peut entraîner une perte
+importante d'eau et provoquer des coûts supplémentaires pour l'exploitant.
+La rapidité de détection constitue donc un élément essentiel de la
+supervision.
+
+\subsection{Typologie des anomalies}
+
+Dans le cadre du projet Droppy, une anomalie correspond à un comportement
+qui s'écarte du fonctionnement habituellement observé.
+
+Plusieurs situations peuvent notamment être considérées :
+
+\begin{itemize}
+
+    \item une augmentation inhabituelle du débit ;
+
+    \item une consommation anormalement élevée pendant une période de faible
+    activité ;
+
+    \item une consommation nocturne inhabituelle ;
+
+    \item une incohérence entre l'état d'une vanne et le débit observé ;
+
+    \item une évolution inhabituelle d'une série temporelle ;
+
+    \item un comportement globalement atypique détecté automatiquement par
+    un modèle d'apprentissage automatique.
+
+\end{itemize}
+
+Il est important de souligner qu'une anomalie ne correspond pas
+nécessairement à une fuite. Elle constitue plutôt un signal nécessitant
+une analyse complémentaire. La plateforme doit donc fournir suffisamment
+d'informations pour permettre à l'opérateur d'interpréter le comportement
+détecté.
+
+\subsection{Données disponibles et télémétrie IoT}
+
+Les capteurs IoT constituent la principale source de données de Droppy.
+
+Les informations exploitées peuvent notamment comprendre :
+
+\begin{itemize}
+
+    \item le débit d'eau ;
+
+    \item la consommation ;
+
+    \item l'état d'une vanne ;
+
+    \item l'identifiant du dispositif ;
+
+    \item l'horodatage associé à la mesure.
+
+\end{itemize}
+
+Chaque équipement doit pouvoir être identifié de manière unique afin de
+maintenir la correspondance entre les mesures reçues et leur source.
+
+La dimension temporelle des données constitue également un élément
+important. L'analyse d'une mesure isolée étant généralement insuffisante,
+le système doit pouvoir exploiter l'évolution des données au cours du
+temps.
+
+\subsection{Enjeux de la détection précoce}
+
+La détection précoce représente un enjeu majeur pour la surveillance des
+réseaux d'eau.
+
+Une anomalie détectée rapidement permet à l'opérateur d'analyser la
+situation et, lorsque cela est nécessaire, de déclencher une intervention
+avant que le problème ne provoque des pertes importantes.
+
+L'objectif de Droppy est donc de réduire autant que possible le délai entre
+l'apparition d'un comportement inhabituel et son identification par
+l'utilisateur.
+
+Cette exigence justifie la mise en place d'une chaîne automatisée combinant
+collecte des données, analyse, détection et notification.
+
+% =============================================================================
+% 2.3 ÉTUDE DE L'EXISTANT
+% =============================================================================
+
+\section{Étude de l'existant}
+
+\subsection{Surveillance traditionnelle}
+
+Les approches traditionnelles de surveillance des réseaux d'eau reposent
+principalement sur les inspections périodiques, les relevés manuels et
+l'utilisation de seuils définis à l'avance.
+
+Dans ce contexte, l'opérateur consulte les mesures disponibles et recherche
+des valeurs pouvant indiquer un dysfonctionnement.
+
+Cette approche reste pertinente pour certains scénarios, mais elle devient
+plus difficile à maintenir lorsque le nombre d'équipements et la fréquence
+des mesures augmentent.
+
+\subsection{Approches basées sur les seuils}
+
+Une méthode courante consiste à définir un seuil à partir duquel une alerte
+est déclenchée.
+
+Par exemple, une règle peut considérer qu'un débit dépassant une certaine
+valeur constitue une situation potentiellement anormale.
+
+Cependant, le comportement normal d'un équipement peut varier selon
+l'heure, le jour, la période d'utilisation ou les caractéristiques du site.
+Un seuil fixe ne permet donc pas toujours de représenter correctement
+l'ensemble des situations possibles.
+
+\subsection{Limites identifiées}
+
+Plusieurs limites peuvent ainsi être identifiées.
+
+Premièrement, les inspections manuelles ne garantissent pas une détection
+immédiate des anomalies.
+
+Deuxièmement, les seuils statiques peuvent générer des faux positifs lorsque
+la variation observée correspond à un fonctionnement normal.
+
+Troisièmement, certaines anomalies peuvent rester invisibles lorsqu'elles
+ne dépassent pas les seuils prédéfinis.
+
+Enfin, l'analyse manuelle devient difficile lorsque plusieurs capteurs
+produisent continuellement des données.
+
+Ces limites montrent qu'une approche automatisée est nécessaire afin
+d'exploiter efficacement les volumes de données disponibles.
+
+\subsection{Besoin d'une supervision intelligente}
+
+Une supervision intelligente doit être capable de combiner plusieurs
+sources d'information et plusieurs mécanismes d'analyse.
+
+Dans Droppy, cette approche repose sur une combinaison entre des règles
+métier et des techniques d'apprentissage automatique.
+
+Les règles métier permettent d'identifier des situations connues, tandis
+que les modèles d'apprentissage automatique permettent de rechercher des
+comportements atypiques dans les données.
+
+Cette complémentarité permet d'obtenir une analyse plus riche qu'une
+approche reposant uniquement sur des seuils fixes.
+
+% =============================================================================
+% 2.4 VISION FONCTIONNELLE DE DROPPY
+% =============================================================================
+
+\section{Vision fonctionnelle de Droppy}
+
+\subsection{Vision globale}
+
+Droppy est conçu comme une plateforme de supervision intelligente permettant
+de transformer les données brutes provenant des équipements IoT en
+informations exploitables par les opérateurs.
+
+La solution est organisée autour de trois composants logiciels principaux :
+
+\begin{itemize}
+
+    \item \textbf{Angular 19}, utilisé pour développer le tableau de bord
+    de supervision ;
+
+    \item \textbf{Spring Boot 3}, utilisé comme service backend central pour
+    l'intégration, l'orchestration et la gestion des événements ;
+
+    \item \textbf{FastAPI et Python}, utilisés pour les traitements de
+    données et les mécanismes d'intelligence artificielle.
+
+\end{itemize}
+
+Le dépôt du projet confirme cette organisation en distinguant notamment
+le frontend \texttt{dashboard-angular}, le service backend
+\texttt{core-service} et le moteur d'intelligence artificielle situé dans
+le répertoire \texttt{src}. :contentReference[oaicite:3]{index=3}
+
+\subsection{Chaîne globale de traitement}
+
+Le fonctionnement fonctionnel de Droppy peut être représenté comme une
+chaîne composée des étapes suivantes :
+
+\begin{enumerate}
+
+    \item collecte des données provenant des équipements IoT ;
+
+    \item ingestion des données par le système ;
+
+    \item nettoyage et préparation des données ;
+
+    \item application des règles métier ;
+
+    \item analyse par les modèles d'apprentissage automatique ;
+
+    \item génération des résultats de détection ou de prévision ;
+
+    \item enregistrement des informations importantes ;
+
+    \item transmission des événements au tableau de bord ;
+
+    \item consultation et interprétation des résultats par l'opérateur.
+
+\end{enumerate}
+
+Cette chaîne permet de transformer progressivement une donnée brute en une
+information pouvant être utilisée pour la supervision et la prise de
+décision.
+
+\subsection{Valeur ajoutée de la solution}
+
+La valeur ajoutée de Droppy réside principalement dans l'intégration de
+plusieurs mécanismes au sein d'une même plateforme.
+
+La solution ne se limite pas à afficher les mesures provenant des capteurs.
+Elle permet également de les nettoyer, de les analyser et d'identifier
+automatiquement certains comportements inhabituels.
+
+L'utilisation d'un modèle tel que \textbf{Isolation Forest} permet notamment
+de rechercher des observations atypiques sans dépendre exclusivement de
+seuils prédéfinis.
+
+La plateforme intègre également des mécanismes de prévision ainsi que des
+notifications permettant de transmettre rapidement les événements
+importants à l'utilisateur.
+
+Le dépôt du projet indique notamment l'existence des fonctionnalités de
+réentraînement des modèles, de prédiction combinée et de prévision de
+consommation. :contentReference[oaicite:4]{index=4}
+
+\subsection{Résultats attendus}
+
+À partir des données collectées, le système doit permettre d'obtenir
+plusieurs types de résultats :
+
+\begin{itemize}
+
+    \item identification de comportements atypiques ;
+
+    \item détection de situations pouvant correspondre à des fuites ;
+
+    \item production de prévisions de consommation ;
+
+    \item génération d'événements d'alerte ;
+
+    \item visualisation des résultats dans le tableau de bord ;
+
+    \item conservation des informations nécessaires à l'analyse historique.
+
+\end{itemize}
+
+L'objectif final est de fournir à l'opérateur une information synthétique
+et exploitable plutôt qu'un simple ensemble de mesures brutes.
+
+% =============================================================================
+% 2.5 IDENTIFICATION DES ACTEURS
+% =============================================================================
+
+\section{Identification des acteurs}
+
+L'identification des acteurs permet de déterminer les différentes entités
+participant au fonctionnement de la solution et leurs responsabilités.
+
+Contrairement à une application classique, Droppy implique à la fois des
+utilisateurs humains, des équipements physiques et des services logiciels.
+
+\subsection{Opérateur / gestionnaire}
+
+L'opérateur constitue l'utilisateur principal de la plateforme.
+
+Il utilise le tableau de bord pour :
+
+\begin{itemize}
+
+    \item consulter les équipements ;
+
+    \item visualiser les données de télémétrie ;
+
+    \item suivre les anomalies détectées ;
+
+    \item consulter les historiques ;
+
+    \item recevoir les notifications ;
+
+    \item analyser les tendances de consommation.
+
+\end{itemize}
+
+Son rôle est principalement orienté vers la supervision et l'interprétation
+des résultats fournis par le système.
+
+\subsection{Capteurs et équipements IoT}
+
+Les équipements IoT représentent les sources physiques des données.
+
+Ils transmettent les mesures nécessaires au fonctionnement de la chaîne
+d'analyse. Ces données peuvent notamment concerner le débit, la
+consommation et l'état des vannes.
+
+Les équipements doivent être identifiables afin de permettre au système
+d'associer chaque mesure au dispositif correspondant.
+
+\subsection{Backend applicatif}
+
+Le backend Spring Boot joue le rôle de service central d'intégration.
+
+Il assure notamment :
+
+\begin{itemize}
+
+    \item la réception et l'intégration des données ;
+
+    \item l'orchestration des traitements ;
+
+    \item la communication avec le service d'intelligence artificielle ;
+
+    \item la persistance des informations ;
+
+    \item le routage des événements vers le tableau de bord.
+
+\end{itemize}
+
+Le dépôt indique notamment l'utilisation de Spring Boot 3, de mécanismes de
+planification et de WebSockets pour les notifications en temps réel. :contentReference[oaicite:5]{index=5}
+
+\subsection{Service d'intelligence artificielle}
+
+Le microservice FastAPI constitue le moteur d'analyse de Droppy.
+
+Il prend en charge les traitements liés aux données et à l'intelligence
+artificielle, notamment :
+
+\begin{itemize}
+
+    \item le nettoyage des données ;
+
+    \item le prétraitement ;
+
+    \item l'application de certaines règles métier ;
+
+    \item la détection des anomalies ;
+
+    \item la prévision de consommation ;
+
+    \item le réentraînement des modèles.
+
+\end{itemize}
+
+Le projet expose notamment des opérations de réentraînement, de prédiction
+et de prévision pour un équipement donné. :contentReference[oaicite:6]{index=6}
+
+\subsection{Interface de supervision}
+
+L'interface Angular constitue le point d'accès principal de l'opérateur.
+
+Elle permet de centraliser les résultats produits par les différents
+services et de les présenter sous une forme visuelle.
+
+Le tableau de bord permet notamment d'afficher les anomalies, les données
+historiques et les graphiques de télémétrie tout en recevant les
+notifications en temps réel. :contentReference[oaicite:7]{index=7}
+
+% =============================================================================
+% 2.6 BESOINS FONCTIONNELS
+% =============================================================================
+
+\section{Besoins fonctionnels}
+
+Les besoins fonctionnels définissent les services que la plateforme doit
+fournir pour répondre aux objectifs identifiés.
+
+\subsection{Gestion des équipements}
+
+\textbf{BF01 -- Gestion des équipements}
+
+Le système doit permettre d'identifier et de consulter les équipements
+surveillés.
+
+Chaque équipement doit pouvoir être associé à ses différentes mesures et
+à son historique afin de faciliter le suivi individuel.
+
+\subsection{Ingestion des télémétries}
+
+\textbf{BF02 -- Collecte des données}
+
+Le système doit permettre de recevoir et d'intégrer les données produites
+par les équipements IoT.
+
+Les données doivent être correctement associées à leur équipement et à
+leur instant de mesure.
+
+\subsection{Nettoyage et prétraitement}
+
+\textbf{BF03 -- Prétraitement}
+
+Le système doit être capable de nettoyer et de préparer les données avant
+leur analyse.
+
+Cette étape doit notamment permettre de traiter les valeurs manquantes,
+les incohérences et les transformations nécessaires à l'exploitation des
+séries temporelles.
+
+\subsection{Détection des anomalies}
+
+\textbf{BF04 -- Détection des anomalies}
+
+La plateforme doit identifier automatiquement les comportements atypiques
+présents dans les données de télémétrie.
+
+Un modèle de type \textbf{Isolation Forest} est utilisé pour contribuer à
+cette détection.
+
+\subsection{Détection des fuites}
+
+\textbf{BF05 -- Détection des fuites}
+
+Le système doit permettre d'identifier les situations pouvant correspondre
+à une fuite.
+
+La détection peut s'appuyer sur plusieurs indicateurs tels que le débit,
+la consommation, l'état des vannes et les comportements observés pendant
+les périodes de faible activité.
+
+\subsection{Prévision de consommation}
+
+\textbf{BF06 -- Prévision}
+
+La plateforme doit permettre de produire des prévisions de consommation
+afin de comparer les valeurs observées avec les tendances attendues.
+
+Cette fonctionnalité peut également contribuer à identifier des écarts
+significatifs dans le comportement d'un équipement.
+
+\subsection{Gestion des alertes}
+
+\textbf{BF07 -- Alertes}
+
+Lorsqu'une anomalie importante est identifiée, le système doit pouvoir
+générer un événement destiné à l'opérateur.
+
+Les événements critiques doivent pouvoir être transmis rapidement au
+tableau de bord.
+
+\subsection{Supervision en temps réel}
+
+\textbf{BF08 -- Supervision}
+
+Le système doit fournir une interface permettant à l'opérateur de suivre
+les informations importantes relatives au réseau.
+
+La plateforme doit notamment permettre de consulter les anomalies, les
+graphiques, les équipements et les notifications.
+
+\subsection{Historisation}
+
+\textbf{BF09 -- Historique}
+
+Le système doit conserver les informations nécessaires au suivi historique
+des données et des anomalies.
+
+L'historique permet notamment de comparer le comportement actuel d'un
+équipement avec ses observations précédentes.
+
+\subsection{Réentraînement des modèles}
+
+\textbf{BF10 -- Gestion des modèles}
+
+Le système doit permettre de réentraîner les modèles d'intelligence
+artificielle pour un équipement donné lorsque cela est nécessaire.
+
+Cette fonctionnalité permet d'adapter les modèles aux nouvelles données
+disponibles.
+
+% =============================================================================
+% 2.7 BESOINS NON FONCTIONNELS
+% =============================================================================
+
+\section{Besoins non fonctionnels}
+
+\subsection{Performance}
+
+\textbf{BNF01 -- Performance}
+
+La plateforme doit traiter les données avec un temps de réponse acceptable
+afin de permettre une utilisation fluide du tableau de bord.
+
+\subsection{Fiabilité}
+
+\textbf{BNF02 -- Fiabilité}
+
+Les données doivent être traitées de manière cohérente et les mécanismes
+d'analyse doivent limiter les erreurs liées aux données incomplètes ou
+incohérentes.
+
+\subsection{Temps réel}
+
+\textbf{BNF03 -- Temps réel}
+
+Les événements importants doivent pouvoir être transmis rapidement à
+l'interface de supervision.
+
+L'utilisation des WebSockets permet au backend de transmettre des
+notifications sans nécessiter une actualisation permanente de la page.
+
+\subsection{Sécurité}
+
+\textbf{BNF04 -- Sécurité}
+
+Les communications entre les différents composants doivent être protégées
+et les accès aux fonctionnalités sensibles doivent être contrôlés.
+
+\subsection{Maintenabilité}
+
+\textbf{BNF05 -- Maintenabilité}
+
+La séparation entre frontend, backend et service d'intelligence artificielle
+doit faciliter la maintenance et l'évolution du système.
+
+\subsection{Évolutivité}
+
+\textbf{BNF06 -- Évolutivité}
+
+La solution doit pouvoir intégrer de nouveaux équipements, de nouvelles
+méthodes d'analyse et de nouvelles fonctionnalités sans nécessiter une
+refonte complète de l'architecture.
+
+\subsection{Ergonomie}
+
+\textbf{BNF07 -- Ergonomie}
+
+Le tableau de bord doit présenter les informations de manière claire et
+compréhensible afin de permettre à l'opérateur d'identifier rapidement
+les situations nécessitant son attention.
+
+% =============================================================================
+% 2.8 CONTRAINTES DU PROJET
+% =============================================================================
+
+\section{Contraintes du projet}
+
+La réalisation de Droppy doit respecter plusieurs contraintes techniques
+et organisationnelles.
+
+\subsection{Hétérogénéité technologique}
+
+La solution repose sur plusieurs technologies et environnements :
+
+\begin{itemize}
+
+    \item Python et FastAPI pour le service d'intelligence artificielle ;
+
+    \item Java et Spring Boot pour le backend ;
+
+    \item TypeScript et Angular 19 pour le frontend ;
+
+    \item outils de gestion de données et de modèles pour le pipeline IA.
+
+\end{itemize}
+
+Cette diversité nécessite une définition claire des interfaces entre les
+différents composants.
+
+\subsection{Nature temporelle des données}
+
+Les données de télémétrie sont associées à des instants de mesure. Leur
+ordre temporel doit donc être conservé afin de permettre l'analyse des
+évolutions et des tendances.
+
+\subsection{Communication inter-services}
+
+Le backend doit assurer une communication fiable avec le service
+d'intelligence artificielle et avec le frontend.
+
+Le dépôt du projet indique notamment l'utilisation de HTTP/REST entre les
+services ainsi que de WebSockets pour les notifications temps réel. :contentReference[oaicite:8]{index=8}
+
+\subsection{Gestion de la persistance}
+
+Les informations nécessaires au suivi des équipements, des événements et
+des analyses doivent être correctement persistées.
+
+Le projet utilise notamment Liquibase pour la gestion et le versionnement
+des évolutions du schéma de base de données. :contentReference[oaicite:9]{index=9}
+
+\subsection{Validation de la solution}
+
+La solution doit être accompagnée de tests permettant de vérifier les
+différents composants.
+
+Le dépôt comprend notamment des tests dédiés au pipeline Python et aux
+fonctionnalités de l'API, ainsi que des procédures de test pour les
+différents composants de l'application. :contentReference[oaicite:10]{index=10}
+
+% =============================================================================
+% 2.9 CAHIER DES CHARGES FONCTIONNEL
+% =============================================================================
+
+\section{Cahier des charges fonctionnel}
+
+Le cahier des charges fonctionnel synthétise les principales exigences
+identifiées au cours de l'analyse.
+
+\subsection{Tableau des exigences}
+
+\begin{table}[H]
+\centering
+\caption{Synthèse des exigences fonctionnelles de Droppy}
+\label{tab:exigences-droppy}
+
+\renewcommand{\arraystretch}{1.35}
+
+\begin{tabularx}{\textwidth}{
+    >{\bfseries\centering\arraybackslash}p{1.5cm}
+    >{\raggedright\arraybackslash}p{3.1cm}
+    >{\raggedright\arraybackslash}X
+    >{\centering\arraybackslash}p{1.8cm}
+}
+
+\toprule
+
+ID & Fonctionnalité & Description & Priorité \\
+
+\midrule
+
+BF01 &
+Gestion des équipements &
+Identifier et consulter les équipements surveillés. &
+Haute \\
+
+BF02 &
+Collecte des données &
+Recevoir et intégrer les télémétries provenant des capteurs. &
+Haute \\
+
+BF03 &
+Prétraitement &
+Nettoyer et préparer les données avant leur analyse. &
+Haute \\
+
+BF04 &
+Détection des anomalies &
+Identifier automatiquement les comportements atypiques. &
+Haute \\
+
+BF05 &
+Détection des fuites &
+Identifier les situations pouvant correspondre à une fuite. &
+Haute \\
+
+BF06 &
+Prévision &
+Analyser les tendances et prévoir la consommation. &
+Moyenne \\
+
+BF07 &
+Alertes &
+Informer l'opérateur lorsqu'une anomalie importante est détectée. &
+Haute \\
+
+BF08 &
+Supervision &
+Visualiser les données, équipements et anomalies. &
+Haute \\
+
+BF09 &
+Historique &
+Permettre la consultation des données historiques. &
+Moyenne \\
+
+BF10 &
+Gestion des modèles &
+Permettre le réentraînement et l'exploitation des modèles. &
+Moyenne \\
+
+\bottomrule
+
+\end{tabularx}
+
+\end{table}
+
+\subsection{Priorisation des exigences}
+
+Les exigences ont été classées selon leur importance pour le fonctionnement
+global de la solution.
+
+Les fonctionnalités de priorité \textbf{haute} constituent le noyau de
+Droppy. Elles comprennent notamment la collecte des données, le
+prétraitement, la détection des anomalies, la détection des fuites, les
+alertes et la supervision.
+
+Les fonctionnalités de priorité \textbf{moyenne} viennent compléter le
+système et permettent d'améliorer les capacités d'analyse et d'exploitation
+des données.
+
+Cette priorisation permet de concentrer les efforts de développement sur
+les fonctionnalités essentielles avant d'intégrer les fonctionnalités
+complémentaires.
+
+% =============================================================================
+% 2.10 CRITÈRES DE RÉUSSITE
+% =============================================================================
+
+\section{Critères de réussite}
+
+La réussite de la plateforme Droppy est évaluée selon plusieurs dimensions.
+
+\subsection{Critères fonctionnels}
+
+Le système doit être capable :
+
+\begin{itemize}
+
+    \item de recevoir correctement les données de télémétrie ;
+
+    \item de traiter et préparer les données ;
+
+    \item d'identifier les comportements atypiques ;
+
+    \item de détecter les situations pouvant correspondre à des fuites ;
+
+    \item de produire des prévisions ;
+
+    \item de générer et transmettre les alertes ;
+
+    \item d'afficher les résultats dans le tableau de bord.
+
+\end{itemize}
+
+\subsection{Critères techniques}
+
+La solution doit également respecter plusieurs critères techniques :
+
+\begin{itemize}
+
+    \item communication correcte entre les différents services ;
+
+    \item fonctionnement des échanges temps réel ;
+
+    \item persistance fiable des informations ;
+
+    \item possibilité de réentraîner les modèles ;
+
+    \item modularité des composants ;
+
+    \item présence de mécanismes de test et de validation.
+
+\end{itemize}
+
+\subsection{Critères liés à l'utilisateur}
+
+Enfin, le système doit permettre à l'opérateur :
+
+\begin{itemize}
+
+    \item d'accéder rapidement aux informations importantes ;
+
+    \item d'identifier facilement les anomalies ;
+
+    \item de consulter l'historique ;
+
+    \item de comprendre les résultats produits ;
+
+    \item de réagir rapidement lorsqu'une alerte critique est générée.
+
+\end{itemize}
+
+% =============================================================================
+% 2.11 CONCLUSION
+% =============================================================================
+
+\section{Conclusion}
+
+Ce chapitre a permis de transformer la problématique générale de la
+détection des fuites d'eau en un ensemble d'exigences fonctionnelles et
+non fonctionnelles concrètes.
+
+L'analyse du domaine métier a montré l'importance de disposer d'une
+surveillance continue capable d'exploiter les données issues des
+équipements IoT. L'étude de l'existant a également mis en évidence les
+limites des inspections périodiques et des approches reposant uniquement
+sur des seuils fixes.
+
+La vision fonctionnelle de Droppy repose ainsi sur une chaîne complète
+allant de la collecte des télémétries jusqu'à leur analyse et leur
+restitution dans une interface de supervision. Cette chaîne combine
+traitement des données, règles métier, apprentissage automatique,
+prévision et notifications.
+
+Les acteurs du système ainsi que les besoins fonctionnels, les besoins non
+fonctionnels et les contraintes ont ensuite été identifiés. Le cahier des
+charges obtenu constitue la base de la phase de conception.
+
+Le chapitre suivant sera consacré à la \textbf{conception de la solution}.
+Il présentera l'architecture globale de Droppy, les interactions entre ses
+différents composants, les flux de données ainsi que les modèles permettant
+de formaliser la conception du système.

@@ -1,0 +1,20 @@
+@startuml sequence_get
+actor "Opérateur" as User
+participant "DashboardComponent" as Dashboard
+participant "AnomalyService" as AngularSvc
+participant "DroppyAnomalyController" as Controller
+participant "DroppyAnomalyRepository" as Repo
+database "H2 / PostgreSQL" as DB
+
+User -> Dashboard : Appliquer filtres
+Dashboard -> AngularSvc : getAnomalies({mac, status, severity})
+AngularSvc -> Controller : GET /api/v1/droppy/anomalies?...
+
+Controller -> Repo : filterAnomalies(...)
+Repo -> DB : JPQL Query + Pagination
+DB --> Repo : Page<DroppyAnomaly>
+Repo --> Controller : Page result
+Controller --> AngularSvc : JSON
+AngularSvc --> Dashboard : PageResponse
+Dashboard --> User : Affichage tableau + stats
+@enduml

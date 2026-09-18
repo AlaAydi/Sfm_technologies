@@ -1,0 +1,23 @@
+\babel@toc {french}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Architecture globale de la solution Droppy}}{37}{figure.caption.5}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Diagramme de cas d'utilisation de Droppy}}{38}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Séquence de détection d'une anomalie}}{39}{figure.caption.7}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Séquence de prévision de consommation}}{40}{figure.caption.8}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Diagramme de classes principal de Droppy}}{41}{figure.caption.9}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Écran principal du dashboard Droppy}}{44}{figure.caption.10}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Organisation générale de l'interface}}{44}{figure.caption.11}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Visualisation graphique des données}}{45}{figure.caption.12}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Visualisation cartographique des anomalies}}{45}{figure.caption.13}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Déclenchement d'une analyse}}{46}{figure.caption.14}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Pipeline de traitement des données dans Droppy}}{48}{figure.caption.15}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Stratégie hybride de détection des anomalies}}{49}{figure.caption.16}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Principe d'utilisation de l'Isolation Forest dans Droppy}}{50}{figure.caption.17}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsfinish 
+\contentsfinish 

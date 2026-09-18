@@ -1,0 +1,36 @@
+@startuml sequence_train
+participant "Client\n(Admin/API)" as Client
+participant "FastAPI\nmain.py" as API
+participant "DataLoader" as Loader
+participant "DataCleaner" as Cleaner
+participant "Preprocessor" as Prep
+participant "IsolationForestModel" as IF
+participant "ConsumptionForecaster" as FC
+database "PostgreSQL\n/ CSV" as DB
+database "models/\n(Joblib)" as Models
+
+Client -> API : POST /train/{mac}
+activate API
+
+API -> Loader : load_measures(mac)
+Loader -> DB : SELECT FROM droppy_measure
+DB --> Loader : DataFrame
+Loader --> API : df_raw
+
+API -> Cleaner : clean_dataset(df_raw)
+Cleaner --> API : df_cleaned
+
+API -> Prep : preprocess_dataset(df_cleaned)
+Prep --> API : df_prep
+
+API -> IF : train_isolation_forest(df_prep, mac)
+IF -> Models : joblib.dump(model)
+IF --> API : model_path
+
+API -> FC : train_daily_forecaster(df_cleaned, mac)
+FC -> Models : joblib.dump(model_data)
+FC --> API : forecaster_path
+
+API --> Client : {status: "success"}
+deactivate API
+@enduml

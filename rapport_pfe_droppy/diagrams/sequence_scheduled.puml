@@ -1,0 +1,37 @@
+@startuml sequence_scheduled
+participant "AnomalyScheduler" as Scheduler
+participant "DroppyAnomalyService" as Service
+participant "FastAPI\n(Microservice IA)" as IA
+participant "DroppyAnomalyRepository" as Repo
+participant "WebSocket\nBroker" as WS
+participant "Dashboard\n(Angular)" as UI
+
+Scheduler -> Service : analyzeDeviceAnomalies(mac)
+activate Service
+
+Service -> IA : POST /predict/{mac}
+activate IA
+
+IA -> IA : load_measures(mac)
+IA -> IA : clean_dataset()
+IA -> IA : preprocess_dataset()
+IA -> IA : detect_night_flows()
+IA -> IA : detect_valve_inconsistency()
+IA -> IA : predict_isolation_forest()
+IA -> IA : detect_consumption_deviation()
+
+IA --> Service : PredictResponse {anomalies[]}
+deactivate IA
+
+loop Pour chaque anomalie
+  Service -> Repo : existsByMacAndTypeAndStartAt()
+  alt Nouvelle anomalie
+    Service -> Repo : save(DroppyAnomaly)
+    Service -> WS : convertAndSend("/topic/droppy/anomalies")
+    WS --> UI : STOMP MESSAGE (JSON)
+    UI -> UI : liveAlerts.update()
+  end
+end
+
+deactivate Service
+@enduml

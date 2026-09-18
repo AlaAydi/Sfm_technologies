@@ -1,0 +1,25 @@
+@startuml sequence_validate
+actor "Opérateur" as User
+participant "DashboardComponent" as Dashboard
+participant "AnomalyService" as AngularSvc
+participant "DroppyAnomalyController" as Controller
+participant "DroppyAnomalyService" as Service
+participant "DroppyAnomalyRepository" as Repo
+participant "WebSocket\nBroker" as WS
+
+User -> Dashboard : Clic "Confirmer"
+Dashboard -> AngularSvc : updateStatus(id, CONFIRMED)
+AngularSvc -> Controller : POST /{id}/status?status=CONFIRMED
+
+Controller -> Service : updateStatus(id, CONFIRMED)
+Service -> Repo : findById(id)
+Repo --> Service : DroppyAnomaly
+Service -> Service : setStatus(CONFIRMED)
+Service -> Repo : save(anomaly)
+Service -> WS : convertAndSend("/topic/droppy/anomalies/update")
+Service --> Controller : DroppyAnomaly (updated)
+Controller --> AngularSvc : 200 OK
+AngularSvc --> Dashboard : Observable complete
+Dashboard -> Dashboard : loadAnomalies()
+Dashboard --> User : Tableau mis à jour
+@enduml

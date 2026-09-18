@@ -1,0 +1,193 @@
+\chapter{Modélisation UML}
+
+Ce chapitre présente les diagrammes UML de la solution Droppy. Les fichiers sources PlantUML se trouvent dans le dossier \texttt{diagrams/}. Pour générer les images, exécutez le script \texttt{generate-diagrams.bat} ou utilisez \url{https://www.plantuml.com/plantuml}.
+
+\section{Diagramme de cas d'utilisation}
+
+\textbf{Acteurs identifiés :}
+\begin{itemize}
+  \item \textbf{Opérateur} --- consulte le dashboard, valide les alertes ;
+  \item \textbf{Planificateur (Système)} --- déclenche l'analyse périodique ;
+  \item \textbf{Microservice IA (FastAPI)} --- acteur secondaire (système externe).
+\end{itemize}
+
+\umlfigure{usecase}{Diagramme de cas d'utilisation — Plateforme Droppy}
+
+\section{Diagramme de classes}
+
+Le diagramme de classes modélise les entités Java (backend), les services Angular (frontend) et les modules Python (microservice IA).
+
+\umlfigure{class_diagram}{Diagramme de classes — Architecture complète Droppy}
+
+\section{Environnement de travail}
+
+La réalisation de la solution \droppy{} s'est appuyée sur un environnement
+technologique hétérogène, dans lequel chaque composant repose sur des
+technologies et des outils adaptés à son rôle.
+
+\subsection{Environnement matériel}
+
+Le développement et les tests ont été réalisés sur un poste de travail
+présentant la configuration suivante.
+
+\begin{table}[H]
+\centering
+\caption{Configuration matérielle du poste de développement}
+\label{tab:environnement-materiel}
+
+\renewcommand{\arraystretch}{1.35}
+
+\begin{tabularx}{\textwidth}{
+    >{\bfseries}p{3.6cm}
+    >{\raggedright\arraybackslash}X
+}
+
+\toprule
+Élément & Caractéristique \\
+\midrule
+
+Processeur &
+Intel Core i7 (ou équivalent), 11e génération ou supérieure. \\
+\\[2pt]
+
+Mémoire vive &
+16 Go de RAM. \\
+\\[2pt]
+
+Stockage &
+Disque SSD de 512 Go. \\
+\\[2pt]
+
+Système d'exploitation &
+Windows 10/11, utilisé pour le développement local. \\
+\\[2pt]
+
+Réseau &
+Accès réseau local pour les échanges entre les services (FastAPI, Spring
+Boot, Angular) et les équipements IoT. \\
+
+\bottomrule
+
+\end{tabularx}
+\end{table}
+
+\subsection{Environnement logiciel}
+
+L'environnement logiciel regroupe les outils de développement, le
+versionnement du code ainsi que les langages et frameworks utilisés par
+chaque composant de la solution.
+
+\subsubsection{Frameworks et technologies}
+
+Le tableau~\ref{tab:environnement-travail} récapitule les principaux
+frameworks et technologies mobilisés pour le développement de la solution.
+
+\begin{table}[H]
+\centering
+\caption{Frameworks et technologies de la solution Droppy}
+\label{tab:environnement-travail}
+
+\renewcommand{\arraystretch}{1.35}
+
+\begin{tabularx}{\textwidth}{
+    >{\bfseries}p{3.6cm}
+    >{\raggedright\arraybackslash}X
+}
+
+\toprule
+Composant & Technologies et outils \\
+\midrule
+
+Système d'exploitation &
+Développement et exécution locale sous Windows. \\
+\\[2pt]
+
+Frontend (\texttt{dashboard-angular}) &
+Angular~19, TypeScript~5.7, RxJS~7.8 et Node.js (version LTS). \\
+\\[2pt]
+
+Backend (\texttt{core-service}) &
+Java~17, Spring Boot~3.3.1, Maven et Liquibase pour la gestion des
+migrations de schéma. \\
+\\[2pt]
+
+Microservice IA (\texttt{src}) &
+Python~3.10+, FastAPI, scikit-learn (Isolation Forest), joblib
+(sérialisation des modèles), pandas, numpy, SQLAlchemy et uvicorn. \\
+\\[2pt]
+
+Base de données &
+PostgreSQL en environnement réel, H2 pour les tests. \\
+\\[2pt]
+
+Modèles &
+Isolation Forest et modèle de prévision quotidienne (régression Ridge),
+sauvegardés au format joblib dans \texttt{models/}. \\
+\\[2pt]
+
+Communication &
+REST/HTTP entre les services et WebSocket STOMP pour les notifications
+temps réel vers le dashboard. \\
+\\[2pt]
+
+Outils de développement &
+Git/GitHub pour le versionnement, IDE (IntelliJ IDEA, Visual Studio Code),
+PlantUML pour la modélisation des diagrammes. \\
+\\[2pt]
+
+Tests et validation &
+pytest pour le pipeline Python, JUnit pour le backend Spring, frameworks
+de test Angular (Jasmine/Karma) pour le frontend. \\
+
+\bottomrule
+
+\end{tabularx}
+\end{table}
+
+Cette organisation permet de développer chaque composant de manière
+indépendante tout en maintenant des interfaces claires entre les services.
+
+\section{Diagrammes de séquence}
+
+Les diagrammes de séquence décrivent les échanges entre les différents
+composants de la solution pour les principaux scénarios d'utilisation.
+
+\subsection{Détection automatique planifiée}
+
+Ce scénario illustre le déclenchement périodique de l'analyse par le
+planificateur. Le microservice IA applique l'ensemble des mécanismes de
+détection, puis le backend persiste les nouvelles anomalies et notifie le
+dashboard en temps réel via WebSocket.
+
+\umlfigure{sequence_scheduled}{Séquence — Détection automatique planifiée d'anomalies}
+
+\subsection{Validation d'une anomalie}
+
+Ce scénario décrit la validation d'une anomalie par l'opérateur depuis le
+dashboard. Le backend met à jour le statut de l'anomalie en base et diffuse
+la modification aux clients connectés, le tableau étant ensuite rafraîchi.
+
+\umlfigure{sequence_validate}{Séquence — Validation d'une anomalie par l'opérateur}
+
+\subsection{Entraînement des modèles ML}
+
+Ce scénario illustre l'entraînement des modèles associés à un dispositif.
+Les données historiques sont chargées, nettoyées et prétraitées, puis
+l'Isolation Forest et le modèle de prévision sont entraînés et sérialisés
+au format joblib.
+
+\umlfigure{sequence_train}{Séquence — Entraînement des modèles ML}
+
+\subsection{Consultation filtrée des anomalies}
+
+Ce scénario décrit la consultation des anomalies par l'opérateur avec
+application de filtres (MAC, statut, sévérité). La requête paginée est
+exécutée par le backend, puis les résultats sont affichés dans le dashboard.
+
+\umlfigure{sequence_get}{Séquence — Consultation filtrée des anomalies}
+
+\section{Code PlantUML}
+
+Les sources complètes des diagrammes sont disponibles en annexe (Listing~\ref{lst:plantuml-usecase}) et dans le dossier \texttt{diagrams/}.
+
+\lstinputlisting[caption={Diagramme de cas d'utilisation (PlantUML)}, label={lst:plantuml-usecase}, language=]{diagrams/usecase.puml}

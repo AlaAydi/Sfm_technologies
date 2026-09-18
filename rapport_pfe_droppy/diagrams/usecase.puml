@@ -1,0 +1,50 @@
+@startuml usecase
+left to right direction
+skinparam actorStyle awesome
+
+actor "Opérateur" as Operateur
+actor "Planificateur\n(Système)" as Scheduler
+actor "Microservice IA\n(FastAPI)" as IA
+
+rectangle "Plateforme Droppy" {
+  usecase "Consulter les anomalies" as UC1
+  usecase "Filtrer et paginer\nles résultats" as UC2
+  usecase "Confirmer une anomalie" as UC3
+  usecase "Marquer comme\nfaux positif" as UC4
+  usecase "Visualiser la carte\ndes fuites" as UC5
+  usecase "Consulter le graphique\nde débit" as UC6
+  usecase "Recevoir alertes\ntemps réel" as UC7
+  usecase "Déclencher une analyse\nmanuelle" as UC8
+  usecase "Planifier l'analyse\nautomatique" as UC9
+  usecase "Charger les mesures IoT" as UC10
+  usecase "Nettoyer et prétraiter\nles données" as UC11
+  usecase "Détecter anomalies\n(règles + ML)" as UC12
+  usecase "Entraîner les modèles ML" as UC13
+  usecase "Prévoir la consommation" as UC14
+  usecase "Persister les anomalies" as UC15
+  usecase "Diffuser via WebSocket" as UC16
+}
+
+Operateur --> UC1
+Operateur --> UC2
+Operateur --> UC3
+Operateur --> UC4
+Operateur --> UC5
+Operateur --> UC6
+Operateur --> UC7
+Operateur --> UC8
+
+Scheduler --> UC9
+
+UC1 ..> UC2 : <<include>>
+UC8 ..> UC10 : <<include>>
+UC9 ..> UC10 : <<include>>
+UC10 ..> UC11 : <<include>>
+UC11 ..> UC12 : <<include>>
+UC12 --> IA
+UC13 --> IA
+UC14 --> IA
+UC12 ..> UC15 : <<include>>
+UC15 ..> UC16 : <<include>>
+UC16 --> Operateur
+@enduml

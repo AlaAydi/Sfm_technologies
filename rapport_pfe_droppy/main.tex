@@ -1,0 +1,798 @@
+% =============================================================================
+% RAPPORT DE STAGE — DROPPY
+% Détection intelligente de fuites d'eau
+% Style graphique : Noir & Bleu
+% Compatible Overleaf / pdfLaTeX
+% =============================================================================
+
+\documentclass[12pt,a4paper,twoside]{report}
+
+% =============================================================================
+% ENCODAGE, LANGUE ET POLICES
+% =============================================================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% =============================================================================
+% MISE EN PAGE
+% =============================================================================
+
+\usepackage[
+    top=2.7cm,
+    bottom=2.7cm,
+    left=3cm,
+    right=2.5cm,
+    headheight=18pt,
+    headsep=0.45cm,
+    footskip=1.1cm
+]{geometry}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% =============================================================================
+% COULEURS — IDENTITÉ DROPPY
+% =============================================================================
+
+\usepackage{xcolor}
+\usepackage{amssymb}
+
+\definecolor{DroppyBlue}{HTML}{1565C0}
+\definecolor{DroppyLightBlue}{HTML}{EAF3FF}
+\definecolor{DroppyDark}{HTML}{17202A}
+\definecolor{DroppyGray}{HTML}{5F6B76}
+\definecolor{DroppyLightGray}{HTML}{F4F6F8}
+\definecolor{DroppyBorder}{HTML}{D9E2EC}
+
+% =============================================================================
+% TITRES
+% =============================================================================
+
+\usepackage{titlesec}
+\usepackage{titletoc}
+
+% -----------------------------------------------------------------------------
+% Lignes décoratives
+% -----------------------------------------------------------------------------
+
+\newcommand{\chapterrule}{%
+    \vspace{8pt}%
+    \color{DroppyBlue}%
+    \titlerule[1.2pt]%
+}
+
+\newcommand{\sectionrule}{%
+    \vspace{3pt}%
+    \color{DroppyBlue}%
+    \titlerule[0.7pt]%
+}
+
+% -----------------------------------------------------------------------------
+% Chapitres numérotés
+% -----------------------------------------------------------------------------
+
+\titleformat{\chapter}[display]
+    {\normalfont\bfseries\color{DroppyDark}}
+    {%
+        \filleft
+        \fontsize{14}{16}\selectfont
+        \color{DroppyBlue}
+        \MakeUppercase{\chaptertitlename}\ \thechapter
+    }
+    {10pt}
+    {%
+        \filleft
+        \fontsize{28}{32}\selectfont
+    }
+    [\chapterrule]
+
+\titlespacing*{\chapter}
+    {0pt}
+    {-10pt}
+    {28pt}
+
+% -----------------------------------------------------------------------------
+% Chapitres non numérotés
+% -----------------------------------------------------------------------------
+
+\titleformat{name=\chapter,numberless}[display]
+    {\normalfont\bfseries\color{DroppyDark}}
+    {}
+    {0pt}
+    {\fontsize{25}{30}\selectfont}
+    [\chapterrule]
+
+% -----------------------------------------------------------------------------
+% Sections
+% -----------------------------------------------------------------------------
+
+\titleformat{\section}
+    {\normalfont\Large\bfseries\color{DroppyDark}}
+    {\color{DroppyBlue}\thesection}
+    {0.8em}
+    {}
+    [\sectionrule]
+
+\titlespacing*{\section}
+    {0pt}
+    {22pt}
+    {10pt}
+
+% -----------------------------------------------------------------------------
+% Sous-sections
+% -----------------------------------------------------------------------------
+
+\titleformat{\subsection}
+    {\normalfont\large\bfseries\color{DroppyDark}}
+    {\color{DroppyBlue}\thesubsection}
+    {0.7em}
+    {}
+
+\titlespacing*{\subsection}
+    {0pt}
+    {15pt}
+    {6pt}
+
+% -----------------------------------------------------------------------------
+% Sous-sous-sections
+% -----------------------------------------------------------------------------
+
+\titleformat{\subsubsection}
+    {\normalfont\normalsize\bfseries\color{DroppyGray}}
+    {\thesubsubsection}
+    {0.6em}
+    {}
+
+\titlespacing*{\subsubsection}
+    {0pt}
+    {10pt}
+    {4pt}
+
+% =============================================================================
+% FIGURES ET TABLEAUX
+% =============================================================================
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{makecell}
+
+% -----------------------------------------------------------------------------
+% Style des légendes
+% -----------------------------------------------------------------------------
+
+\captionsetup{
+    font=small,
+    labelfont={bf,color=DroppyBlue},
+    textfont={color=DroppyGray},
+    labelsep=period,
+    skip=8pt
+}
+
+% =============================================================================
+% LISTES
+% =============================================================================
+
+\usepackage{enumitem}
+
+\setlist[itemize]{
+    leftmargin=1.5cm,
+    itemsep=3pt,
+    topsep=5pt,
+    label=\textcolor{DroppyBlue}{\small$\blacktriangleright$}
+}
+
+\setlist[enumerate]{
+    leftmargin=1.5cm,
+    itemsep=4pt,
+    topsep=5pt
+}
+
+% =============================================================================
+% TABLEAUX
+% =============================================================================
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+% =============================================================================
+% CODE SOURCE
+% =============================================================================
+
+\usepackage{listings}
+
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{6B7280}
+\definecolor{codepurple}{HTML}{7B1FA2}
+\definecolor{backcolour}{HTML}{F5F7FA}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{pfe}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codeblue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=8pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    framerule=0.5pt,
+    rulecolor=\color{DroppyBorder},
+    xleftmargin=8pt,
+    framexleftmargin=8pt,
+    extendedchars=true,
+    literate={é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {à}{{\`a}}1 {â}{{\^a}}1 {ä}{{\"a}}1 {ç}{{\c c}}1
+             {î}{{\^i}}1 {ï}{{\"i}}1 {ô}{{\^o}}1 {ö}{{\"o}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {œ}{{\oe}}1
+             {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {À}{{\`A}}1
+             {Â}{{\^A}}1 {Ç}{{\c C}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1
+}
+
+\lstset{style=pfe}
+
+% =============================================================================
+% ENCADRÉS
+% =============================================================================
+
+\usepackage[most]{tcolorbox}
+
+\newtcolorbox{droppybox}[1][]{
+    enhanced,
+    breakable,
+    colback=DroppyLightBlue,
+    colframe=DroppyBlue,
+    boxrule=0.6pt,
+    arc=2mm,
+    left=8pt,
+    right=8pt,
+    top=7pt,
+    bottom=7pt,
+    #1
+}
+
+% =============================================================================
+% LIENS
+% =============================================================================
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=DroppyBlue,
+    citecolor=DroppyBlue,
+    urlcolor=DroppyBlue,
+    filecolor=DroppyBlue,
+    pdftitle={Rapport de Stage — Droppy},
+    pdfauthor={Aydi Ala},
+    pdfsubject={
+        Détection intelligente de fuites d'eau par IoT et intelligence artificielle
+    },
+    pdfcreator={LaTeX}
+}
+
+% =============================================================================
+% COMMANDES PERSONNALISÉES
+% =============================================================================
+
+\newcommand{\droppy}{
+    \textbf{\textcolor{DroppyBlue}{Droppy}}
+}
+
+\newcommand{\tech}[1]{
+    \textbf{\textcolor{DroppyBlue}{#1}}
+}
+
+% =============================================================================
+% MACRO POUR LES FIGURES UML
+% =============================================================================
+
+\newcommand{\umlfigure}[2]{%
+    \begin{figure}[H]
+        \centering
+
+        \IfFileExists{images/#1.pdf}{%
+            \includegraphics[width=\textwidth]{images/#1.pdf}%
+        }{%
+            \IfFileExists{images/#1.png}{%
+                \includegraphics[width=\textwidth]{images/#1.png}%
+            }{%
+                \begin{droppybox}
+                    \centering
+                    \textbf{Diagramme : #2}\\[0.4cm]
+
+                    \small
+                    Fichier \texttt{\detokenize{images/#1.png}} non trouvé.\\[0.2cm]
+
+                    Générez-le depuis
+                    \texttt{\detokenize{diagrams/#1.puml}}
+                    avec PlantUML.
+                \end{droppybox}%
+            }%
+        }
+
+        \caption{#2}
+        \label{fig:#1}
+
+    \end{figure}%
+}
+
+% =============================================================================
+% PIED DE PAGE — NUMÉRO UNIQUEMENT
+% =============================================================================
+
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+
+% Supprimer complètement le contenu de l'en-tête et du pied de page
+\fancyhf{}
+
+% Aucun élément dans l'en-tête
+\renewcommand{\headrulewidth}{0pt}
+
+% Numéro de page uniquement, centré et en bleu
+\fancyfoot[C]{%
+    \small
+    \bfseries
+    \color{DroppyBlue}
+    \thepage
+}
+
+% Pas de ligne dans le pied de page
+\renewcommand{\footrulewidth}{0pt}
+
+% =============================================================================
+% STYLE DES PAGES DE CHAPITRE
+% =============================================================================
+%
+% La classe report utilise le style "plain" sur la première page
+% de chaque chapitre. On applique exactement le même style :
+% numéro de page centré et bleu.
+% =============================================================================
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+
+    \fancyfoot[C]{%
+        \small
+        \bfseries
+        \color{DroppyBlue}
+        \thepage
+    }
+
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+% =============================================================================
+% TABLE DES MATIÈRES
+% =============================================================================
+
+\usepackage{tocloft}
+
+\renewcommand{\cftchapfont}{
+    \bfseries
+    \color{DroppyDark}
+}
+
+\renewcommand{\cftchappagefont}{
+    \bfseries
+    \color{DroppyBlue}
+}
+
+\renewcommand{\cftsecfont}{
+    \color{DroppyGray}
+}
+
+\renewcommand{\cftsecpagefont}{
+    \color{DroppyDark}
+}
+
+\setlength{\cftbeforechapskip}{10pt}
+\setlength{\cftbeforesecskip}{3pt}
+
+\renewcommand{\cftchapleader}{
+    \cftdotfill{\cftdotsep}
+}
+
+% =============================================================================
+% DÉBUT DU DOCUMENT
+% =============================================================================
+
+\begin{document}
+
+% =============================================================================
+% PAGE DE GARDE
+% =============================================================================
+
+\begin{titlepage}
+
+\thispagestyle{empty}
+
+\begin{center}
+
+\vspace*{0.3cm}
+
+{\Large\bfseries
+RÉPUBLIQUE TUNISIENNE
+}
+
+\vspace{0.25cm}
+
+{\large\bfseries
+UNIVERSITÉ PRIVÉE DE TUNISIE
+}
+
+\vspace{0.7cm}
+
+\includegraphics[
+    width=4.7cm
+]{images/logo_iteams_uni_vecto__1_-removebg-preview.png}
+
+\vspace{0.7cm}
+
+{\color{DroppyBlue}\rule{13.5cm}{1.2pt}}
+
+\vspace{0.45cm}
+
+{
+    \fontsize{24}{29}\selectfont
+    \bfseries
+    \color{DroppyDark}
+    Rapport de Stage d'Été
+}
+
+\vspace{0.45cm}
+
+{\color{DroppyBlue}\rule{13.5cm}{0.5pt}}
+
+\vspace{0.7cm}
+
+{
+    \Large
+    \bfseries
+    \color{DroppyDark}
+
+    Développement d'une plateforme intelligente\\
+    de détection de fuites d'eau basée sur l'IoT\\
+    et l'intelligence artificielle
+}
+
+\vspace{0.7cm}
+
+\begin{droppybox}
+
+\centering
+
+{
+    \large
+    \bfseries
+    Application Droppy
+}
+
+\vspace{0.2cm}
+
+{
+    \normalsize
+    \textit{Water Leak Detection \& Anomaly Analysis Suite}
+}
+
+\end{droppybox}
+
+\vspace{1.0cm}
+
+\begin{tabular}{
+    >{\bfseries}r
+    @{\hspace{0.5cm}}
+    l
+}
+
+\textcolor{DroppyBlue}{Entreprise d'accueil :}
+&
+SFM Connect -- Groupe SFM, Tunis
+\\[0.35cm]
+
+\textcolor{DroppyBlue}{Élaboré par :}
+&
+Aydi \textsc{Ala}
+\\[0.35cm]
+
+\textcolor{DroppyBlue}{Encadrant professionnel :}
+&
+Mr. Fadi \textsc{Bouricha}
+
+\end{tabular}
+
+\vfill
+
+{\color{DroppyBlue}\rule{13.5cm}{0.5pt}}
+
+\vspace{0.35cm}
+
+{
+    \large
+    \bfseries
+    Année universitaire : 2025 / 2026
+}
+
+\end{center}
+
+\end{titlepage}
+
+% =============================================================================
+% REMERCIEMENTS
+% =============================================================================
+
+\chapter*{Remerciements}
+
+\addcontentsline{toc}{chapter}{Remerciements}
+
+Je tiens à exprimer ma profonde gratitude à l'équipe de
+\textbf{SFM Connect}, branche du Groupe SFM, pour m'avoir accueilli
+et accompagné tout au long de ce stage.
+
+Cette expérience m'a permis de mettre en pratique mes connaissances
+et de développer de nouvelles compétences dans les domaines du
+développement logiciel, de l'IoT et de l'intelligence artificielle.
+
+Je remercie tout particulièrement
+\textbf{Mr. Fadi Bouricha}, mon encadrant professionnel, pour son
+accompagnement, ses conseils, sa disponibilité et la confiance
+accordée tout au long de la réalisation de ce projet.
+
+Mes remerciements s'adressent également à l'ensemble des membres de
+l'équipe pour leur disponibilité, leurs conseils techniques et les
+échanges qui ont contribué à enrichir mon expérience professionnelle.
+
+Enfin, j'adresse mes sincères remerciements à mes enseignants ainsi
+qu'à ma famille et à mes proches pour leur soutien et leurs
+encouragements durant cette période.
+
+% =============================================================================
+% RÉSUMÉ
+% =============================================================================
+
+\chapter*{Résumé}
+
+\addcontentsline{toc}{chapter}{Résumé}
+
+Ce rapport présente la conception et la réalisation de
+\textbf{Droppy}, une suite logicielle multi-services destinée à la
+détection automatique de fuites d'eau et d'anomalies dans les réseaux
+de distribution.
+
+Développée au sein de SFM Connect, la solution combine des données
+issues de capteurs IoT, des règles métier hydrauliques telles que le
+\textit{Minimum Night Flow} et la détection d'incohérences entre
+l'état des vannes et le débit, ainsi que des méthodes d'apprentissage
+automatique, notamment \textbf{Isolation Forest} et un modèle de
+prévision de consommation.
+
+L'architecture repose sur trois composants principaux : un
+microservice dédié à l'intelligence artificielle développé avec
+Python et FastAPI, un backend d'intégration développé avec Spring Boot
+et intégrant des notifications en temps réel, ainsi qu'un tableau de
+bord web développé avec Angular~19.
+
+La solution vise ainsi à proposer une supervision intelligente capable
+d'exploiter les données de télémétrie, d'identifier des comportements
+inhabituels et de fournir aux opérateurs des informations exploitables
+pour faciliter la détection et le suivi des anomalies.
+
+\textbf{\textcolor{DroppyBlue}{Mots-clés :}}
+IoT, fuite d'eau, intelligence artificielle, Isolation Forest,
+FastAPI, Spring Boot, Angular, Minimum Night Flow, détection
+d'anomalies.
+
+% =============================================================================
+% ABSTRACT
+% =============================================================================
+
+\chapter*{Abstract}
+
+\addcontentsline{toc}{chapter}{Abstract}
+
+This report presents the design and implementation of
+\textbf{Droppy}, a multi-service software suite dedicated to automatic
+water leak and anomaly detection in distribution networks.
+
+Developed at SFM Connect, the solution combines data collected from
+IoT sensors, hydraulic business rules such as the
+\textit{Minimum Night Flow} and valve-flow inconsistency detection,
+together with machine learning techniques including
+\textbf{Isolation Forest} and a consumption forecasting model.
+
+The architecture is based on three main components: an artificial
+intelligence microservice developed with Python and FastAPI, an
+integration backend developed with Spring Boot and supporting
+real-time notifications, and a web dashboard developed with Angular~19.
+
+The proposed solution aims to provide intelligent supervision capable
+of processing telemetry data, identifying unusual behaviors, and
+providing operators with actionable information to facilitate anomaly
+detection and monitoring.
+
+\textbf{\textcolor{DroppyBlue}{Keywords:}}
+IoT, water leak, artificial intelligence, Isolation Forest, FastAPI,
+Spring Boot, Angular, Minimum Night Flow, anomaly detection.
+
+\clearpage
+
+% =============================================================================
+% TABLE DES MATIÈRES
+% =============================================================================
+
+\tableofcontents
+
+\clearpage
+
+% =============================================================================
+% LISTE DES FIGURES
+% =============================================================================
+
+\listoffigures
+
+\addcontentsline{toc}{chapter}{Liste des figures}
+
+\clearpage
+
+% =============================================================================
+% LISTE DES TABLEAUX
+% =============================================================================
+
+\listoftables
+
+\addcontentsline{toc}{chapter}{Liste des tableaux}
+
+\clearpage
+
+% =============================================================================
+% CHAPITRES
+% =============================================================================
+%
+% IMPORTANT :
+%
+% Le numéro du chapitre dépend de l'ordre des \chapter{} présents
+% dans les fichiers inclus et non du nom du fichier.
+%
+% Les noms de fichiers existants sont conservés ici.
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% CHAPITRE 1
+% -----------------------------------------------------------------------------
+
+\input{chapters/01-introduction}
+
+% -----------------------------------------------------------------------------
+% CHAPITRE 2
+% -----------------------------------------------------------------------------
+
+\input{chapters/02-entreprise}
+
+% -----------------------------------------------------------------------------
+% CHAPITRE 3
+% -----------------------------------------------------------------------------
+
+\input{chapters/03-existant}
+
+% -----------------------------------------------------------------------------
+% CHAPITRE 4
+% -----------------------------------------------------------------------------
+
+\input{chapters/04-solution}
+
+% -----------------------------------------------------------------------------
+% CHAPITRE 5
+% -----------------------------------------------------------------------------
+
+\input{chapters/05-besoins}
+
+% -----------------------------------------------------------------------------
+% CHAPITRE 6
+% -----------------------------------------------------------------------------
+
+\input{chapters/09-conclusion}
+
+% =============================================================================
+% BIBLIOGRAPHIE
+% =============================================================================
+
+\begin{thebibliography}{9}
+
+\addcontentsline{toc}{chapter}{Bibliographie}
+
+\bibitem{sklearn}
+
+Pedregosa, F. et al. (2011).
+
+\textit{Scikit-learn: Machine Learning in Python}.
+
+Journal of Machine Learning Research,
+12, pp. 2825--2830.
+
+\bibitem{liu2008}
+
+Liu, F. T., Ting, K. M. et Zhou, Z.-H. (2008).
+
+\textit{Isolation Forest}.
+
+Proceedings of the 2008 IEEE International Conference on
+Data Mining (ICDM).
+
+\bibitem{fastapi}
+
+Ramírez, S.
+
+\textit{FastAPI Documentation}.
+
+\url{https://fastapi.tiangolo.com/}
+
+\bibitem{spring}
+
+VMware.
+
+\textit{Spring Boot Reference Documentation}.
+
+\url{https://spring.io/projects/spring-boot}
+
+\bibitem{angular}
+
+Google.
+
+\textit{Angular Documentation}.
+
+\url{https://angular.dev/}
+
+\bibitem{mnf}
+
+International Water Association.
+
+\textit{Minimum Night Flow for Leak Detection}.
+
+Best Practice Guidelines.
+
+\bibitem{sfm}
+
+Groupe SFM.
+
+\textit{SFM Connect -- Solutions IoT Énergie \& Eau}.
+
+\url{https://linkedin.com/company/groupe-sfm}
+
+\end{thebibliography}
+
+% =============================================================================
+% ANNEXES
+% =============================================================================
+
+\appendix
+
+\input{chapters/annexes}
+% =============================================================================
+% FIN DU DOCUMENT
+% =============================================================================
+
+\end{document}

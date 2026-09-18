@@ -1,0 +1,62 @@
+\chapter{Annexes}
+
+\section{User Stories implémentées}
+
+\begin{table}[H]
+  \centering
+  \caption{Correspondance User Stories / modules}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{US} & \textbf{Description} & \textbf{Module} \\
+    \midrule
+    US-05 & Health check & FastAPI \\
+    US-06 & Connexion SQLAlchemy & loader.py \\
+    US-07 & Prétraitement & preprocessor.py \\
+    US-08 & Minimum Night Flow & mnf.py \\
+    US-09 & Isolation Forest & isolation\_forest.py \\
+    US-10 & Valve Inconsistency & valve\_inconsistency.py \\
+    US-11 & Prédiction agrégée & main.py \\
+    US-12 & Prévision consommation & forecaster.py \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Configuration de déploiement}
+
+\begin{table}[H]
+  \centering
+  \caption{Services et ports}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Service} & \textbf{Port} & \textbf{Commande} \\
+    \midrule
+    FastAPI & 8001 & \texttt{uvicorn src.main:app --port 8001} \\
+    Spring Boot & 8082 & \texttt{mvn spring-boot:run} \\
+    Angular & 4200 & \texttt{ng serve --port 4200} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Structure du projet source}
+
+\begin{lstlisting}[caption={Arborescence du projet Droppy}, label={lst:structure}]
+stage/
+|-- core-service/          # Spring Boot Backend
+|   |-- src/main/java/     # Controllers, Services, Models
+|   |-- pom.xml
+|   `-- db/changelog/      # Liquibase
+|-- dashboard-angular/     # Angular 19 UI
+|   |-- src/app/components/
+|   |-- src/app/services/
+|   `-- package.json
+|-- src/                   # FastAPI AI Engine
+|   |-- data/              # loader, cleaner
+|   |-- features/          # preprocessor
+|   |-- models/            # ML detectors
+|   `-- main.py
+|-- tests/                 # pytest
+|-- models/                # Joblib serialized models
+|-- requirements.txt
+`-- run_app.bat
+\end{lstlisting}
+

@@ -1,0 +1,376 @@
+% =============================================================================
+% CHAPITRE 1 — INTRODUCTION GÉNÉRALE
+% =============================================================================
+
+\chapter{Introduction générale}
+
+% =============================================================================
+% 1.1 CONTEXTE GÉNÉRAL
+% =============================================================================
+
+\section{Contexte général}
+
+L'eau constitue une ressource naturelle essentielle au développement des sociétés
+et au fonctionnement de nombreuses activités humaines. Sa gestion efficace
+représente aujourd'hui un enjeu majeur, particulièrement dans les régions
+confrontées à des périodes de stress hydrique et à une augmentation constante
+des besoins en consommation. Dans ce contexte, la réduction des pertes d'eau
+et l'amélioration de la surveillance des installations hydrauliques constituent
+des problématiques importantes pour les entreprises, les collectivités et les
+gestionnaires d'infrastructures.
+
+Les réseaux de distribution et les installations hydrauliques peuvent être
+affectés par différents types de dysfonctionnements, notamment les fuites,
+les consommations inhabituelles, les variations anormales de débit ou encore
+les problèmes liés au fonctionnement des vannes. Lorsque ces événements ne
+sont pas détectés rapidement, ils peuvent entraîner une consommation excessive
+d'eau, une augmentation des coûts d'exploitation, des dégradations matérielles
+et, dans certains cas, des conséquences environnementales importantes.
+
+Les méthodes traditionnelles de surveillance reposent généralement sur des
+contrôles périodiques et des inspections manuelles. Bien que ces approches
+permettent d'identifier certains problèmes, elles présentent des limites
+lorsqu'il s'agit de détecter rapidement des anomalies apparaissant entre deux
+inspections. L'exploitation continue des données issues de capteurs connectés
+constitue ainsi une approche permettant d'améliorer la surveillance des
+installations et de réduire le délai de détection des événements anormaux.
+
+L'intégration de l'Internet des Objets
+(\textit{Internet of Things -- IoT}) permet justement de collecter en continu
+des données provenant des équipements physiques. Ces données peuvent ensuite
+être exploitées par des systèmes logiciels capables de les analyser
+automatiquement et d'assister les opérateurs dans la supervision des
+installations.
+
+% =============================================================================
+% 1.2 PRÉSENTATION DE L'ENTREPRISE ET DU PROJET
+% =============================================================================
+
+\section{Présentation de l'entreprise et du projet}
+
+C'est dans ce contexte que s'inscrit le présent projet, réalisé au sein de
+\textbf{SFM Connect}, branche spécialisée dans les solutions liées à
+l'Internet des Objets (\textit{Internet of Things -- IoT}) du
+\textbf{Groupe SFM}, à Tunis.
+
+SFM Connect développe des solutions permettant de connecter des équipements
+physiques à des plateformes numériques afin de collecter, traiter et exploiter
+leurs données. Dans le domaine de la gestion de l'eau, le projet
+\textbf{Droppy} s'inscrit dans cette démarche en proposant une solution
+destinée à améliorer la supervision des installations hydrauliques à partir
+des données provenant de capteurs IoT.
+
+Ces capteurs transmettent régulièrement différentes informations relatives au
+fonctionnement du réseau, notamment le débit d'eau
+(\texttt{flow\_rate}), la consommation cumulative
+(\texttt{consumption}) ainsi que l'état d'une vanne
+(\texttt{state}), généralement représenté par les états
+\texttt{ON} et \texttt{OFF}. Chaque équipement est identifié de manière
+unique, notamment à travers son adresse MAC, permettant ainsi d'associer les
+différentes mesures au capteur correspondant.
+
+L'exploitation de ces données permet de passer d'une simple collecte
+d'informations à une véritable approche de supervision intelligente. Le
+système développé dans le cadre de ce projet vise ainsi à analyser
+automatiquement les données de télémétrie afin d'identifier des comportements
+inhabituels pouvant correspondre à des fuites ou à d'autres anomalies de
+fonctionnement.
+
+% =============================================================================
+% 1.3 PRÉSENTATION DE LA SOLUTION DROPPY
+% =============================================================================
+
+\section{Présentation de la solution Droppy}
+
+Le projet \textbf{Droppy -- Water Leak Detection \& Anomaly Analysis Suite}
+consiste en la conception et la réalisation d'une plateforme logicielle
+intelligente dédiée à la détection des fuites d'eau et à l'analyse des
+anomalies provenant des capteurs IoT.
+
+La solution adopte une architecture distribuée organisée autour de plusieurs
+composants spécialisés. Elle associe une interface web développée avec
+\textbf{Angular 19}, un backend principal développé avec
+\textbf{Spring Boot 3} et un service dédié aux traitements d'intelligence
+artificielle développé avec \textbf{FastAPI} et Python.
+
+Cette organisation permet de séparer les différentes responsabilités du
+système. Le backend constitue le service central de la plateforme et assure
+notamment l'intégration des données, l'orchestration des traitements, la
+gestion de la persistance ainsi que la communication avec l'interface
+utilisateur. Le service d'intelligence artificielle prend en charge les
+traitements nécessaires à l'analyse des données et à la détection des
+comportements inhabituels.
+
+Le tableau de bord constitue l'interface principale de supervision. Il permet
+aux utilisateurs de consulter les informations relatives aux capteurs,
+d'analyser les données historiques, de visualiser les anomalies détectées et
+de recevoir des notifications lorsqu'un événement important est identifié.
+
+Les choix techniques ainsi que l'organisation détaillée de cette architecture
+seront présentés dans les chapitres consacrés à l'analyse des besoins et à la
+conception de la solution.
+
+% =============================================================================
+% 1.4 PROBLÉMATIQUE
+% =============================================================================
+
+\section{Problématique}
+
+La principale difficulté d'un système de surveillance des installations
+hydrauliques réside dans la capacité à distinguer un comportement normal
+d'un comportement réellement anormal. Une augmentation du débit peut, par
+exemple, correspondre à une utilisation normale de l'installation, mais elle
+peut également être le signe d'une fuite. De la même manière, un état
+particulier de la vanne associé à un débit inattendu peut révéler une
+incohérence dans le fonctionnement du système.
+
+L'analyse d'un seul indicateur ne permet donc pas toujours d'obtenir une
+détection suffisamment fiable. Il devient nécessaire de prendre en
+considération plusieurs signaux provenant des capteurs et d'étudier leur
+évolution dans le temps.
+
+Par ailleurs, les règles statiques peuvent être efficaces pour identifier
+certains cas connus, mais elles présentent des limites face à des
+comportements inhabituels qui n'ont pas été explicitement définis à l'avance.
+L'utilisation de techniques d'intelligence artificielle et d'apprentissage
+automatique permet alors de compléter les règles métier en recherchant
+automatiquement des comportements atypiques dans les données.
+
+La problématique principale de ce projet peut ainsi être formulée comme suit :
+
+\begin{quote}
+\textit{
+Comment concevoir et mettre en œuvre une plateforme intelligente, fiable
+et évolutive permettant d'exploiter les données issues de capteurs IoT afin
+de détecter automatiquement les fuites d'eau et les anomalies de
+fonctionnement, tout en fournissant aux opérateurs une interface de
+supervision capable de présenter les résultats et de générer des alertes
+en temps réel ?
+}
+\end{quote}
+
+% =============================================================================
+% 1.5 APPROCHE PROPOSÉE
+% =============================================================================
+
+\section{Approche proposée}
+
+Afin de répondre à cette problématique, le projet adopte une approche hybride
+combinant des méthodes déterministes et des techniques d'apprentissage
+automatique.
+
+Dans un premier temps, les données provenant des capteurs sont nettoyées et
+prétraitées afin de traiter les valeurs incohérentes et de préparer les
+données pour les différentes étapes d'analyse. Une attention particulière est
+accordée à l'exploitation des mesures de débit et de consommation en tant que
+séries temporelles.
+
+Dans un deuxième temps, des règles métier sont appliquées afin d'identifier
+certaines situations particulières. Parmi ces mécanismes figure notamment
+l'analyse du \textit{Minimum Night Flow} (MNF), permettant d'étudier les
+consommations observées pendant les périodes nocturnes, ainsi que la détection
+d'incohérences entre l'état d'une vanne et les mesures de débit.
+
+En complément de ces règles, le système intègre des méthodes d'apprentissage
+automatique. L'algorithme \textbf{Isolation Forest}, utilisé dans une approche
+de détection non supervisée, permet d'identifier des observations présentant
+un comportement inhabituel par rapport aux données observées.
+
+Un mécanisme de prévision de la consommation est également utilisé afin de
+comparer les tendances attendues aux comportements réellement observés.
+
+Cette combinaison permet ainsi de dépasser les limites d'une détection
+reposant uniquement sur des seuils fixes. Les résultats des différents
+mécanismes d'analyse peuvent ensuite être exploités par le système de
+supervision afin d'informer les opérateurs et de faciliter l'identification
+des situations nécessitant une intervention.
+
+% =============================================================================
+% 1.6 ARCHITECTURE GÉNÉRALE DE LA SOLUTION
+% =============================================================================
+
+\section{Architecture générale de la solution}
+
+L'architecture générale de Droppy repose sur trois composants principaux qui
+collaborent pour assurer la collecte, le traitement, l'analyse et la
+visualisation des données.
+
+Le premier composant correspond au \textbf{frontend Angular 19}. Il constitue
+l'interface utilisateur de la plateforme et permet notamment d'afficher les
+informations relatives aux capteurs, les anomalies détectées, les données
+historiques ainsi que différentes visualisations graphiques. Il permet
+également de recevoir des événements en temps réel.
+
+Le deuxième composant est le \textbf{backend Spring Boot 3}, qui constitue
+le service central de l'application. Il assure l'intégration des différents
+traitements, la gestion des données, la persistance des informations et la
+communication avec l'interface utilisateur.
+
+Le troisième composant correspond au \textbf{service d'intelligence
+artificielle FastAPI}. Il regroupe les traitements liés à la préparation des
+données, à la détection des anomalies et à la prévision. Il communique avec
+le backend à travers des API afin de fournir les résultats nécessaires à la
+plateforme.
+
+Cette organisation permet de séparer clairement les responsabilités entre
+l'interface utilisateur, la logique applicative et les traitements
+d'intelligence artificielle. Elle facilite ainsi la maintenance du système
+et permet d'envisager son évolution vers de nouveaux types de capteurs, de
+nouvelles méthodes d'analyse ou de nouvelles fonctionnalités.
+
+L'architecture détaillée, les flux de communication entre les composants
+ainsi que les choix technologiques seront présentés dans les chapitres
+consacrés à la conception de la solution.
+
+% =============================================================================
+% 1.7 OBJECTIFS DU PROJET
+% =============================================================================
+
+\section{Objectifs du projet}
+
+L'objectif général de ce projet est de concevoir et développer une plateforme
+intelligente permettant d'améliorer la détection des fuites d'eau et la
+supervision des installations hydrauliques à partir de données IoT.
+
+Plus précisément, les objectifs poursuivis sont les suivants :
+
+\begin{itemize}
+
+    \item Mettre en place un pipeline permettant de charger, nettoyer et
+    prétraiter les données de télémétrie issues des capteurs IoT ;
+
+    \item Développer des mécanismes de détection basés sur des règles métier
+    afin d'identifier les comportements anormaux liés notamment au débit,
+    à la consommation et à l'état des vannes ;
+
+    \item Intégrer des méthodes d'apprentissage automatique, notamment
+    l'algorithme \textbf{Isolation Forest}, afin de détecter automatiquement
+    des comportements atypiques ;
+
+    \item Mettre en place un mécanisme de prévision de la consommation
+    permettant d'analyser les tendances et d'identifier d'éventuels écarts
+    par rapport au comportement attendu ;
+
+    \item Développer un service d'intelligence artificielle avec
+    \textbf{FastAPI} afin d'exposer les fonctionnalités d'analyse,
+    de prédiction et de prévision à travers des API REST ;
+
+    \item Développer un backend central avec \textbf{Spring Boot 3}
+    permettant d'assurer l'intégration des différents composants de la
+    plateforme ;
+
+    \item Mettre en œuvre un système de notifications en temps réel afin
+    d'informer rapidement les opérateurs lorsqu'une anomalie importante
+    est détectée ;
+
+    \item Concevoir un tableau de bord interactif avec
+    \textbf{Angular 19} permettant aux utilisateurs de visualiser les
+    données, les anomalies et les informations relatives aux capteurs ;
+
+    \item Assurer la persistance et la gestion structurée des données afin
+    de permettre la consultation et l'analyse des historiques ;
+
+    \item Mettre en place des tests permettant de vérifier le bon
+    fonctionnement des différents composants de la solution.
+
+\end{itemize}
+
+% =============================================================================
+% 1.8 MÉTHODOLOGIE ET ORGANISATION DU PROJET
+% =============================================================================
+
+\section{Méthodologie et organisation du projet}
+
+La réalisation du projet a été organisée autour de plusieurs étapes
+successives permettant de progresser progressivement de l'analyse du besoin
+jusqu'à la validation de la solution.
+
+La première étape a consisté à comprendre le fonctionnement du système IoT
+et la structure des données provenant des capteurs. Cette phase a permis
+d'identifier les différentes variables disponibles et de déterminer les
+informations nécessaires à la détection des anomalies.
+
+La deuxième étape a concerné le traitement et la préparation des données.
+Les données brutes ont été analysées, nettoyées et transformées afin de
+constituer une base exploitable pour les différents mécanismes de détection.
+
+La troisième étape a consisté à concevoir et développer les mécanismes
+d'analyse en combinant les règles métier et les méthodes d'apprentissage
+automatique. Cette phase a notamment permis d'intégrer la détection des
+comportements atypiques ainsi que les mécanismes de prévision de la
+consommation.
+
+La quatrième étape a été consacrée au développement de l'architecture
+applicative. Les différents services ont été mis en place afin d'assurer
+la communication entre les composants de la plateforme. En parallèle,
+l'interface de supervision a été développée afin de permettre la
+visualisation et l'exploitation des résultats.
+
+Enfin, une phase de tests et de validation a permis de vérifier le
+comportement des différentes composantes du système et d'évaluer la
+cohérence des résultats produits.
+
+% =============================================================================
+% 1.9 STRUCTURE DU RAPPORT
+% =============================================================================
+
+\section{Structure du rapport}
+
+Afin de présenter de manière progressive les différentes étapes de réalisation
+du projet, ce rapport est organisé en plusieurs chapitres complémentaires.
+
+Le premier chapitre présente le contexte général du projet, l'entreprise
+d'accueil, la solution Droppy, la problématique ainsi que les objectifs
+poursuivis.
+
+Le deuxième chapitre est consacré à l'analyse des besoins et au cahier des
+charges. Il présente notamment les acteurs du système, les besoins
+fonctionnels et non fonctionnels, les contraintes ainsi que les critères
+permettant d'évaluer la réussite de la solution.
+
+Les chapitres suivants présentent progressivement l'analyse de l'existant,
+la conception de la solution, l'architecture logicielle, les modèles UML
+ainsi que les choix technologiques adoptés.
+
+Une partie du rapport est ensuite consacrée à la réalisation de la plateforme.
+Elle présente les principales fonctionnalités développées au niveau du
+backend, du service d'intelligence artificielle et de l'interface de
+supervision.
+
+Les mécanismes d'intelligence artificielle et de détection des anomalies
+sont également détaillés, notamment le prétraitement des données, les règles
+métier, l'algorithme \textbf{Isolation Forest} ainsi que les mécanismes de
+prévision.
+
+Enfin, le rapport présente la stratégie de tests et de validation mise en
+place afin d'évaluer le fonctionnement de la solution, avant de terminer
+par une conclusion générale présentant les principales contributions
+réalisées, les limites identifiées et les perspectives d'évolution de
+la plateforme.
+
+% =============================================================================
+% CONCLUSION DU CHAPITRE
+% =============================================================================
+
+\section*{Conclusion du chapitre}
+
+\addcontentsline{toc}{section}{Conclusion du chapitre}
+
+Ce premier chapitre a permis de présenter le contexte général dans lequel
+s'inscrit le projet \textbf{Droppy}, ainsi que les enjeux liés à la
+surveillance intelligente des installations hydrauliques. L'analyse du
+problème a mis en évidence les limites des approches traditionnelles et la
+nécessité de disposer d'une solution capable d'exploiter en continu les
+données issues des capteurs IoT.
+
+La solution proposée repose sur une approche combinant traitement des
+données, règles métier et techniques d'apprentissage automatique afin
+d'améliorer la détection des comportements anormaux. L'architecture retenue
+permet également de séparer les différentes responsabilités du système et
+de fournir une interface de supervision adaptée aux besoins des utilisateurs.
+
+Après avoir défini le contexte, la problématique et les objectifs du projet,
+le chapitre suivant sera consacré à l'analyse détaillée des besoins et à
+l'élaboration du cahier des charges. Cette étape permettra de transformer
+les objectifs identifiés en exigences fonctionnelles et non fonctionnelles
+précises, constituant ainsi la base de la conception de la solution.

@@ -1,0 +1,116 @@
+@startuml class_diagram
+
+enum AnomalyStatus {
+  NEW
+  CONFIRMED
+  FALSE_POSITIVE
+}
+
+class DroppyAnomaly {
+  - id: Long
+  - mac: String
+  - type: String
+  - score: Double
+  - severity: String
+  - startAt: LocalDateTime
+  - endAt: LocalDateTime
+  - status: AnomalyStatus
+}
+
+class DroppyAnomalyRepository {
+  + filterAnomalies(): Page
+  + existsByMacAndTypeAndStartAt(): boolean
+}
+
+class DroppyAnomalyService {
+  + analyzeDeviceAnomalies(mac): void
+  + updateStatus(id, status): DroppyAnomaly
+}
+
+class DroppyAnomalyController {
+  + getAnomalies(): Page
+  + updateStatus(): DroppyAnomaly
+  + triggerAnalysis(): void
+}
+
+class AnomalyScheduler {
+  + runAnomalyDetectionTask(): void
+}
+
+class DashboardComponent {
+  + loadAnomalies(): void
+  + confirm(anomaly): void
+  + triggerAnalysis(): void
+}
+
+class AnomalyService {
+  + getAnomalies(): Observable
+  + updateStatus(): Observable
+}
+
+class WebsocketService {
+  + getAnomalies(): Observable
+}
+
+class FastAPIApp {
+  + train_models(mac): dict
+  + predict_anomalies(mac): PredictResponse
+  + get_forecast(mac): list
+}
+
+class DataLoader {
+  + load_measures(): DataFrame
+}
+
+class DataCleaner {
+  + clean_dataset(): DataFrame
+}
+
+class Preprocessor {
+  + preprocess_dataset(): tuple
+}
+
+class MNFDetector {
+  + detect_night_flows(): list
+}
+
+class ValveInconsistencyDetector {
+  + detect_valve_inconsistency(): list
+}
+
+class IsolationForestModel {
+  + train_isolation_forest(): str
+  + predict_isolation_forest(): list
+}
+
+class ConsumptionForecaster {
+  + train_daily_forecaster(): str
+  + forecast_consumption(): list
+}
+
+class DroppyMeasure <<table>> {
+  id: BIGINT
+  flow_rate: DOUBLE
+  consumption: DOUBLE
+  mac_address: VARCHAR
+  state: VARCHAR
+  measure_date: TIMESTAMP
+}
+
+DroppyAnomaly --> AnomalyStatus
+DroppyAnomalyRepository ..> DroppyAnomaly
+DroppyAnomalyService --> DroppyAnomalyRepository
+DroppyAnomalyController --> DroppyAnomalyService
+AnomalyScheduler --> DroppyAnomalyService
+DashboardComponent --> AnomalyService
+DashboardComponent --> WebsocketService
+FastAPIApp --> DataLoader
+FastAPIApp --> DataCleaner
+FastAPIApp --> Preprocessor
+FastAPIApp --> MNFDetector
+FastAPIApp --> ValveInconsistencyDetector
+FastAPIApp --> IsolationForestModel
+FastAPIApp --> ConsumptionForecaster
+DataLoader ..> DroppyMeasure
+DroppyAnomalyService ..> FastAPIApp : REST
+@enduml

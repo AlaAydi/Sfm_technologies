@@ -1,0 +1,163 @@
+% =============================================================================
+% CHAPITRE 6 — CONCLUSION GÉNÉRALE ET PERSPECTIVES
+% =============================================================================
+
+\chapter{Conclusion générale et perspectives}
+
+% =============================================================================
+% 6.1 CONCLUSION GÉNÉRALE
+% =============================================================================
+
+\section{Conclusion générale}
+
+Ce projet de stage a porté sur la conception et la réalisation de Droppy,
+une solution intelligente dédiée à la supervision et à l'analyse des données
+issues d'un réseau d'eau.
+
+L'objectif principal était de proposer une plateforme capable d'exploiter
+les données de télémétrie afin d'identifier automatiquement des comportements
+anormaux et de fournir des informations utiles à la supervision du réseau.
+
+La réalisation du projet a permis de mettre en place une architecture
+distribuée intégrant une interface de supervision, un service central
+d'orchestration et un microservice dédié aux traitements d'intelligence
+artificielle. Cette organisation a permis de séparer les différentes
+responsabilités tout en assurant leur communication.
+
+La conception de la solution a été formalisée à travers plusieurs modèles
+UML permettant de représenter les interactions, l'architecture, les
+séquences principales, la structure des classes et l'organisation du
+déploiement.
+
+La réalisation de l'application a ensuite permis de concrétiser ces choix
+à travers un dashboard destiné à la supervision des anomalies, à la
+visualisation des données et à la consultation des prévisions.
+
+La composante intelligente constitue également un élément essentiel de
+Droppy. L'approche retenue combine plusieurs mécanismes complémentaires,
+notamment des règles métier, l'Isolation Forest et la prévision de
+consommation. Cette combinaison permet d'obtenir une analyse plus adaptée
+aux caractéristiques des données étudiées.
+
+Ainsi, ce projet a permis de mettre en pratique différentes compétences
+liées au développement logiciel, à la conception d'architectures
+distribuées, au traitement des données et à l'intelligence artificielle,
+tout en répondant à une problématique concrète de supervision.
+
+
+% =============================================================================
+% 6.2 APPORTS DU PROJET
+% =============================================================================
+
+\section{Apports du projet}
+
+La réalisation de Droppy a permis d'aboutir à une solution intégrant
+plusieurs fonctionnalités complémentaires :
+
+\begin{itemize}
+
+    \item supervision des anomalies détectées ;
+
+    \item visualisation des informations à travers un dashboard ;
+
+    \item analyse automatique des comportements inhabituels ;
+
+    \item génération de prévisions de consommation ;
+
+    \item transmission des événements en temps réel ;
+
+    \item centralisation des résultats pour leur exploitation par
+    l'utilisateur.
+
+\end{itemize}
+
+Au-delà des fonctionnalités développées, ce projet a également constitué une
+expérience permettant de mieux comprendre les contraintes liées à
+l'intégration de plusieurs services logiciels au sein d'une même solution.
+
+
+% =============================================================================
+% 6.3 LIMITES DE LA SOLUTION
+% =============================================================================
+
+\section{Limites de la solution}
+
+Malgré les fonctionnalités réalisées, certaines améliorations restent
+possibles.
+
+Les performances des mécanismes de détection dépendent notamment de la
+qualité et de la disponibilité des données historiques. La diversité des
+comportements observés sur différents dispositifs peut également nécessiter
+une adaptation des modèles et des paramètres utilisés.
+
+Par ailleurs, l'évolution de la solution vers un environnement de production
+à grande échelle nécessiterait de renforcer certains aspects liés au
+déploiement, à la supervision des services et à la gestion d'un nombre plus
+important de dispositifs.
+
+
+% =============================================================================
+% 6.4 PERSPECTIVES
+% =============================================================================
+
+\section{Perspectives}
+
+Plusieurs évolutions peuvent être envisagées afin d'améliorer les capacités
+de Droppy.
+
+\subsection{Amélioration des modèles d'intelligence artificielle}
+
+Une première perspective consiste à enrichir les modèles d'analyse en
+utilisant davantage de données historiques et en expérimentant différentes
+approches d'apprentissage automatique afin d'améliorer la détection des
+comportements atypiques.
+
+\subsection{Extension de la supervision}
+
+La solution pourrait être étendue afin de prendre en charge un nombre plus
+important de dispositifs et de réseaux. Une gestion plus avancée des
+dispositifs permettrait également d'adapter les analyses aux caractéristiques
+de chaque installation.
+
+\subsection{Amélioration du système d'alertes}
+
+Le système de supervision pourrait être complété par différents canaux
+d'alerte afin de permettre une notification plus rapide des événements
+importants.
+
+\subsection{Déploiement dans un environnement Cloud}
+
+Une évolution vers une infrastructure Cloud permettrait de faciliter le
+déploiement, la disponibilité et la montée en charge de la solution.
+
+\subsection{Développement d'une application mobile}
+
+Une application mobile pourrait également être développée afin de permettre
+aux opérateurs de consulter les anomalies et les alertes depuis leurs
+appareils mobiles.
+
+\subsection{Évolution vers une maintenance prédictive}
+
+À plus long terme, les données historiques et les résultats des modèles
+pourraient être exploités afin d'aller au-delà de la simple détection
+d'anomalies et de proposer une approche de maintenance prédictive.
+
+
+% =============================================================================
+% 6.5 CONCLUSION FINALE
+% =============================================================================
+
+\section{Conclusion finale}
+
+Le développement de Droppy a permis de mettre en œuvre une solution complète
+associant supervision, analyse de données, intelligence artificielle et
+visualisation.
+
+Le projet constitue une première base pour une plateforme pouvant évoluer
+vers une supervision plus automatisée et plus prédictive des réseaux d'eau.
+
+Les perspectives identifiées offrent ainsi plusieurs possibilités
+d'évolution, aussi bien sur le plan fonctionnel que sur le plan technique.
+Elles permettraient notamment d'améliorer la précision des analyses,
+d'étendre la solution à davantage de dispositifs et de faciliter son
+exploitation dans un environnement réel à grande échelle.
