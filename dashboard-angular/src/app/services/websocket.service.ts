@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { DroppyAnomaly } from './anomaly.service';
 
@@ -7,7 +7,10 @@ import { DroppyAnomaly } from './anomaly.service';
 })
 export class WebsocketService {
   private socket: WebSocket | null = null;
-  private connected = false;
+  
+  // Real-time connection status signal
+  connectionStatus = signal<'CONNECTED' | 'CONNECTING' | 'OFFLINE'>('CONNECTING');
+  
   private anomalySubject = new Subject<DroppyAnomaly>();
   private anomalyUpdateSubject = new Subject<DroppyAnomaly>();
 
@@ -23,13 +26,26 @@ export class WebsocketService {
     return this.anomalyUpdateSubject.asObservable();
   }
 
+  /**
+   * Allows injecting a live anomaly event (e.g. from the WOW Leak Simulator)
+   * into the real-time stream.
+   */
+  pushSimulatedAnomaly(anomaly: DroppyAnomaly): void {
+    this.anomalySubject.next(anomaly);
+  }
+
+  pushSimulatedUpdate(anomaly: DroppyAnomaly): void {
+    this.anomalyUpdateSubject.next(anomaly);
+  }
+
   private connect(): void {
-    console.log('Connecting to WebSocket...');
+    if (typeof window === 'undefined') return;
+    this.connectionStatus.set('CONNECTING');
+    
     try {
       this.socket = new WebSocket('ws://localhost:8082/ws-raw');
 
       this.socket.onopen = () => {
-        console.log('WebSocket raw socket open. Sending STOMP CONNECT...');
         this.sendFrame('CONNECT', {
           'accept-version': '1.1,1.2',
           'heart-beat': '10000,10000'
@@ -41,17 +57,16 @@ export class WebsocketService {
       };
 
       this.socket.onclose = () => {
-        console.warn('WebSocket connection closed. Retrying in 5 seconds...');
-        this.connected = false;
-        setTimeout(() => this.connect(), 5000);
+        this.connectionStatus.set('OFFLINE');
+        setTimeout(() => this.connect(), 6000);
       };
 
-      this.socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
+      this.socket.onerror = () => {
+        this.connectionStatus.set('OFFLINE');
       };
-    } catch (err) {
-      console.error('Failed to establish WebSocket connection:', err);
-      setTimeout(() => this.connect(), 5000);
+    } catch {
+      this.connectionStatus.set('OFFLINE');
+      setTimeout(() => this.connect(), 6000);
     }
   }
 
@@ -68,7 +83,6 @@ export class WebsocketService {
   }
 
   private handleMessage(data: string): void {
-    // Parse STOMP Frame
     const nullIdx = data.indexOf('\0');
     const frameStr = nullIdx !== -1 ? data.slice(0, nullIdx) : data;
     
@@ -90,8 +104,7 @@ export class WebsocketService {
     const body = parts.length > 1 ? parts.slice(1).join('\n\n') : '';
 
     if (command === 'CONNECTED') {
-      console.log('STOMP CONNECTED successfully!');
-      this.connected = true;
+      this.connectionStatus.set('CONNECTED');
       this.subscribeToTopics();
     } else if (command === 'MESSAGE') {
       const destination = headers['destination'];
@@ -111,16 +124,12 @@ export class WebsocketService {
   }
 
   private subscribeToTopics(): void {
-    console.log('Subscribing to STOMP topics...');
-    
-    // Subscribe to new anomalies
     this.sendFrame('SUBSCRIBE', {
       id: 'sub-anomalies',
       destination: '/topic/droppy/anomalies',
       ack: 'auto'
     });
 
-    // Subscribe to anomaly updates
     this.sendFrame('SUBSCRIBE', {
       id: 'sub-updates',
       destination: '/topic/droppy/anomalies/update',
