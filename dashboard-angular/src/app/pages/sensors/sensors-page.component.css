@@ -1,0 +1,117 @@
+.sensors-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 20px;
+}
+
+.device-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.device-card.border-critical {
+  border-color: rgba(252, 129, 129, 0.4);
+  box-shadow: 0 4px 24px rgba(252, 129, 129, 0.15);
+}
+
+.device-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.device-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 6px;
+}
+
+.device-mac {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.valve-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.valve-open {
+  background: rgba(104, 211, 145, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(104, 211, 145, 0.3);
+}
+.valve-closed {
+  background: rgba(252, 129, 129, 0.15);
+  color: var(--severity-high);
+  border: 1px solid rgba(252, 129, 129, 0.3);
+}
+
+.device-telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.telemetry-box {
+  background: var(--bg-card-hover);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.telemetry-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+.telemetry-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.telemetry-val small {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.device-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+}
+.device-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.device-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

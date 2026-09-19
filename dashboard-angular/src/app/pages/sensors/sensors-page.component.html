@@ -1,0 +1,139 @@
+<section class="sensors-layout page-stack">
+  <!-- Stats Row -->
+  <div class="stats-row fade-in-up">
+    <div class="stat-card glass-card accent-blue">
+      <div class="stat-icon" style="background: rgba(99, 179, 237, 0.15)">
+        <span>📡</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Capteurs IoT</span>
+        <span class="stat-value" style="color: var(--accent-blue)">{{ devices().length }}</span>
+        <span class="stat-subtext">Postes de sectorisation DMA</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-green">
+      <div class="stat-icon" style="background: rgba(104, 211, 145, 0.15)">
+        <span>✅</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">En Fonctionnement Normal</span>
+        <span class="stat-value" style="color: var(--accent-green)">{{ onlineCount() }}</span>
+        <span class="stat-subtext">Télémétrie nominale</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-red">
+      <div class="stat-icon" style="background: rgba(252, 129, 129, 0.15)">
+        <span>🚨</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Capteurs en Alerte Fuite</span>
+        <span class="stat-value" style="color: var(--severity-high)">{{ criticalCount() }}</span>
+        <span class="stat-subtext">Intervention requise</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-orange">
+      <div class="stat-icon" style="background: rgba(246, 173, 85, 0.15)">
+        <span>🔋</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Santé Moyenne Batterie</span>
+        <span class="stat-value" style="color: var(--accent-orange)">{{ avgBattery() }}%</span>
+        <span class="stat-subtext">Autonomie estimée > 3 ans</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters & Actions -->
+  <div class="filters-section glass-card fade-in-up">
+    <div class="filters-header">
+      <h2 class="section-title">🔍 Supervision du Parc de Compteurs Intelligents</h2>
+      <button class="btn-ghost" (click)="loadDevices()">🔄 Actualiser</button>
+    </div>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Recherche par nom, MAC ou zone</label>
+        <input 
+          type="text" 
+          class="input-field" 
+          [ngModel]="filterSearch()" 
+          (ngModelChange)="filterSearch.set($event)"
+          placeholder="ex: Tunis Centre, 1C:69..."
+        >
+      </div>
+      <div class="filter-group">
+        <label>Statut</label>
+        <select class="input-field" [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)">
+          <option value="">Tous les statuts</option>
+          <option value="ONLINE">Normal (ONLINE)</option>
+          <option value="WARNING">Attention (WARNING)</option>
+          <option value="CRITICAL">Critique (CRITICAL)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Devices Cards Grid -->
+  <div class="devices-grid fade-in-up">
+    @for (dev of filteredDevices(); track dev.mac) {
+      <div class="device-card glass-card" [class.border-critical]="dev.status === 'CRITICAL'">
+        <div class="device-card-header">
+          <div>
+            <div class="badge" [ngClass]="getStatusClass(dev.status)">{{ dev.status }}</div>
+            <h3 class="device-name">{{ dev.name }}</h3>
+            <span class="device-mac">MAC: <code>{{ dev.mac }}</code></span>
+          </div>
+          <div class="valve-pill" [class.valve-open]="dev.valveState === 'OPEN'" [class.valve-closed]="dev.valveState === 'CLOSED'">
+            {{ dev.valveState === 'OPEN' ? '💧 Vanne Ouverte' : '🛑 Vanne Fermée' }}
+          </div>
+        </div>
+
+        <div class="device-telemetry-grid">
+          <div class="telemetry-box">
+            <span class="telemetry-label">Débit Instantané</span>
+            <span class="telemetry-val" [class.text-danger]="dev.currentFlow > 3.5">
+              {{ dev.currentFlow }} <small>L/min</small>
+            </span>
+          </div>
+
+          <div class="telemetry-box">
+            <span class="telemetry-label">Pression Réseau</span>
+            <span class="telemetry-val">{{ dev.pressure }} <small>bar</small></span>
+          </div>
+
+          <div class="telemetry-box">
+            <span class="telemetry-label">Batterie</span>
+            <span class="telemetry-val" [style.color]="getBatteryColor(dev.battery)">
+              {{ dev.battery }}%
+            </span>
+          </div>
+
+          <div class="telemetry-box">
+            <span class="telemetry-label">Signal Réseau</span>
+            <span class="telemetry-val">{{ dev.rssi }} <small>dBm</small></span>
+          </div>
+        </div>
+
+        <div class="device-footer">
+          <div class="device-meta">
+            <span>📍 {{ dev.zone }}</span>
+            <span>⏱️ {{ dev.lastPing }}</span>
+          </div>
+          <div class="device-actions">
+            <button 
+              class="btn-sm" 
+              [ngClass]="dev.valveState === 'OPEN' ? 'btn-ghost text-danger' : 'btn-secondary'"
+              (click)="toggleValve(dev)">
+              {{ dev.valveState === 'OPEN' ? '🚫 Couper la Vanne' : '💧 Ouvrir la Vanne' }}
+            </button>
+            <button class="btn-sm btn-primary" (click)="analyzeDevice(dev)">
+              ⚡ Analyser IA
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>

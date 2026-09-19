@@ -1,0 +1,206 @@
+<section class="anomalies-layout page-stack">
+  <!-- ==================== ADVANCED FILTERS ==================== -->
+  <div class="filters-section glass-card fade-in-up">
+    <div class="filter-header">
+      <div class="filter-title-row">
+        <h2 class="section-title">🔍 Moteur de Recherche & Filtrage Avancé</h2>
+        @if (liveCount() > 0) {
+          <span class="badge badge-high">🔴 {{ liveCount() }} alerte(s) en direct</span>
+        }
+      </div>
+      <div class="export-actions">
+        <button class="btn-secondary btn-sm" (click)="exportCsv()">📥 Exporter CSV</button>
+        <button class="btn-ghost btn-sm" (click)="exportJson()">📄 Exporter JSON</button>
+      </div>
+    </div>
+
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Recherche globale</label>
+        <input type="text" class="input-field" [(ngModel)]="filterSearch" placeholder="Type, zone, mot-clé...">
+      </div>
+
+      <div class="filter-group">
+        <label>Adresse MAC</label>
+        <input type="text" class="input-field" [(ngModel)]="filterMac" placeholder="ex: 1C:69:20:35:73:C4">
+      </div>
+
+      <div class="filter-group">
+        <label>Statut</label>
+        <select class="input-field" [(ngModel)]="filterStatus">
+          <option value="">Tous les statuts</option>
+          <option value="NEW">Nouveau (En attente)</option>
+          <option value="CONFIRMED">Confirmé</option>
+          <option value="FALSE_POSITIVE">Faux positif</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Sévérité</label>
+        <select class="input-field" [(ngModel)]="filterSeverity">
+          <option value="">Toutes les sévérités</option>
+          <option value="HIGH">Haute (Fuite critique)</option>
+          <option value="MEDIUM">Moyenne (Suspicion)</option>
+          <option value="LOW">Basse (Surveillance)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Date Début</label>
+        <input type="date" class="input-field" [(ngModel)]="filterStartDate">
+      </div>
+
+      <div class="filter-group">
+        <label>Date Fin</label>
+        <input type="date" class="input-field" [(ngModel)]="filterEndDate">
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-primary" (click)="applyFilters()">✓ Filtrer</button>
+        <button class="btn-ghost" (click)="resetFilters()">✕ Réinitialiser</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== STATS ROW ==================== -->
+  <div class="stats-row fade-in-up">
+    <div class="stat-card glass-card accent-red">
+      <div class="stat-icon" style="background: rgba(252, 129, 129, 0.15)">
+        <span>📋</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Détecté</span>
+        <span class="stat-value" style="color: var(--severity-high)">{{ totalElements() }}</span>
+        <span class="stat-subtext">Événements enregistrés</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-red">
+      <div class="stat-icon" style="background: rgba(252, 129, 129, 0.1)">
+        <span>🔴</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Haute Sévérité</span>
+        <span class="stat-value" style="color: var(--severity-high)">{{ highCount() }}</span>
+        <span class="stat-subtext">Pertes majeures</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-orange">
+      <div class="stat-icon" style="background: rgba(246, 173, 85, 0.15)">
+        <span>🟠</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Sévérité Moyenne</span>
+        <span class="stat-value" style="color: var(--severity-medium)">{{ mediumCount() }}</span>
+        <span class="stat-subtext">Suspicions modérées</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-blue">
+      <div class="stat-icon" style="background: rgba(99, 179, 237, 0.15)">
+        <span>🆕</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Non Traitées</span>
+        <span class="stat-value" style="color: var(--accent-blue)">{{ newCount() }}</span>
+        <span class="stat-subtext">À confirmer par opérateur</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TABLE ==================== -->
+  <div class="table-section glass-card fade-in-up">
+    <div class="table-header">
+      <div>
+        <h2 class="section-title">📋 Registre des Anomalies & Fuites</h2>
+        <p class="text-muted" style="font-size: 12px; margin-top: 2px;">Cliquez sur une ligne pour ouvrir l'analyse approfondie et les actions d'intervention</p>
+      </div>
+      <span class="result-count">{{ totalElements() }} résultats trouvés</span>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Interrogation des capteurs et de la base d'anomalies...</p>
+      </div>
+    } @else if (anomalies().length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">✅</span>
+        <p>Aucune anomalie ne correspond à vos critères de recherche</p>
+        <p class="text-muted">Essayez de réinitialiser vos filtres pour afficher l'ensemble des mesures</p>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table class="anomalies-table">
+          <thead>
+            <tr>
+              <th (click)="sort('type')">Type {{ sortBy === 'type' ? (direction === 'asc' ? '↑' : '↓') : '' }}</th>
+              <th (click)="sort('mac')">Capteur (MAC) {{ sortBy === 'mac' ? (direction === 'asc' ? '↑' : '↓') : '' }}</th>
+              <th (click)="sort('score')">Score IA {{ sortBy === 'score' ? (direction === 'asc' ? '↑' : '↓') : '' }}</th>
+              <th (click)="sort('severity')">Sévérité {{ sortBy === 'severity' ? (direction === 'asc' ? '↑' : '↓') : '' }}</th>
+              <th (click)="sort('status')">Statut {{ sortBy === 'status' ? (direction === 'asc' ? '↑' : '↓') : '' }}</th>
+              <th (click)="sort('startAt')">Date Début {{ sortBy === 'startAt' ? (direction === 'asc' ? '↑' : '↓') : '' }}</th>
+              <th>Date Fin</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (anomaly of anomalies(); track anomaly.id) {
+              <tr class="table-row" (click)="openDetails(anomaly)" [class.row-high]="anomaly.severity === 'HIGH'">
+                <td class="type-cell">
+                  <span class="type-icon">{{ getTypeIcon(anomaly.type) }}</span>
+                  <div>
+                    <span class="type-label">{{ anomaly.type }}</span>
+                    <span class="text-muted" style="display: block; font-size: 11px;">{{ anomaly.zone || 'Tunis Centre' }}</span>
+                  </div>
+                </td>
+                <td class="mac-cell"><code>{{ anomaly.mac }}</code></td>
+                <td>
+                  <div class="score-bar-wrapper">
+                    <div class="score-bar"
+                         [style.width.%]="anomaly.score * 100"
+                         [class.score-high]="anomaly.score > 0.7"
+                         [class.score-medium]="anomaly.score > 0.4 && anomaly.score <= 0.7"
+                         [class.score-low]="anomaly.score <= 0.4"></div>
+                    <span class="score-value">{{ (anomaly.score * 100).toFixed(0) }}%</span>
+                  </div>
+                </td>
+                <td><span class="badge" [ngClass]="getSeverityClass(anomaly.severity)">{{ anomaly.severity }}</span></td>
+                <td><span class="badge" [ngClass]="getStatusClass(anomaly.status)">{{ anomaly.status }}</span></td>
+                <td class="date-cell">{{ formatDate(anomaly.startAt) }}</td>
+                <td class="date-cell">{{ formatDate(anomaly.endAt) }}</td>
+                <td class="actions-cell">
+                  @if (anomaly.status === 'NEW') {
+                    <button class="btn-action btn-confirm" (click)="confirm(anomaly, $event)" title="Confirmer la fuite">✓</button>
+                    <button class="btn-action btn-fp" (click)="markFalsePositive(anomaly, $event)" title="Faux positif">✗</button>
+                  } @else {
+                    <span class="text-muted" style="font-size: 11px; font-weight: 500;">Traité</span>
+                  }
+                  <button class="btn-action btn-fp" style="font-size: 12px;" (click)="openDetails(anomaly); $event.stopPropagation()" title="Inspecter">🔍</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Windowed Pagination -->
+      <div class="pagination">
+        <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">← Préc.</button>
+        @for (p of visiblePages; track p) {
+          <button class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p + 1 }}</button>
+        }
+        <button class="page-btn" [disabled]="currentPage >= totalPages() - 1" (click)="goToPage(currentPage + 1)">Suiv. →</button>
+      </div>
+    }
+  </div>
+
+  <!-- Slide-Over Inspection Drawer -->
+  <app-anomaly-drawer 
+    [anomaly]="selectedAnomaly()" 
+    (close)="closeDetails()"
+    (confirm)="confirm($event)"
+    (markFalsePositive)="markFalsePositive($event)">
+  </app-anomaly-drawer>
+</section>

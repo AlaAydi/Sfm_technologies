@@ -1,0 +1,122 @@
+<section class="overview-layout page-stack">
+  <!-- ==================== STATS ROW ==================== -->
+  <div class="stats-row fade-in-up">
+    <div class="stat-card glass-card accent-red">
+      <div class="stat-icon" style="background: rgba(252, 129, 129, 0.15)">
+        <span>🚨</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Anomalies Détectées</span>
+        <span class="stat-value" style="color: var(--severity-high)">{{ totalElements() }}</span>
+        <span class="stat-subtext">Historique actif</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-red">
+      <div class="stat-icon" style="background: rgba(252, 129, 129, 0.1)">
+        <span>🔴</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Fuites Critiques</span>
+        <span class="stat-value" style="color: var(--severity-high)">{{ highCount() }}</span>
+        <span class="stat-subtext">Action immédiate</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-orange">
+      <div class="stat-icon" style="background: rgba(246, 173, 85, 0.15)">
+        <span>💧</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Volume d'Eau à Risque</span>
+        <span class="stat-value" style="color: var(--accent-orange)">{{ totalLostM3() }} m³</span>
+        <span class="stat-subtext">Perte cumulée estimée</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-blue">
+      <div class="stat-icon" style="background: rgba(99, 179, 237, 0.15)">
+        <span>🆕</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Non Traitées (NEW)</span>
+        <span class="stat-value" style="color: var(--accent-blue)">{{ newCount() }}</span>
+        <span class="stat-subtext">En attente d'intervention</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VISUALS (MAP & CHART) ==================== -->
+  <div class="visuals-grid fade-in-up">
+    <app-leak-map [anomalies]="anomalies()" [devices]="devices()"></app-leak-map>
+    <app-leak-chart [anomalies]="anomalies()"></app-leak-chart>
+  </div>
+
+  <!-- ==================== STATUS & LATEST ALERTS ==================== -->
+  <div class="overview-lower-grid fade-in-up">
+    <!-- Network Health Distribution -->
+    <div class="status-section glass-card">
+      <h2 class="section-title">🏗️ État Global du Réseau Hydraulique</h2>
+      @if (loading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Calcul des métriques réseau...</p>
+        </div>
+      } @else {
+        <div class="status-bars">
+          @for (severity of severities; track severity) {
+            <div class="status-bar-row">
+              <div class="status-row-header">
+                <span class="status-label">{{ getSeverityLabel(severity) }}</span>
+                <span class="status-count">{{ severityCount(severity) }} cas ({{ severityPercent(severity) }}%)</span>
+              </div>
+              <div class="status-bar-wrapper">
+                <div class="status-bar"
+                     [class.bar-high]="severity === 'HIGH'"
+                     [class.bar-medium]="severity === 'MEDIUM'"
+                     [class.bar-low]="severity === 'LOW'"
+                     [style.width.%]="severityPercent(severity)"></div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Quick Incidents Card -->
+    <div class="incidents-section glass-card">
+      <div class="incidents-header">
+        <h2 class="section-title">⚡ Derniers Événements Prioritaires</h2>
+        <a routerLink="/anomalies" class="link-all">Voir tout →</a>
+      </div>
+
+      <div class="incidents-list">
+        @for (item of anomalies().slice(0, 4); track item.id) {
+          <div class="incident-card-item" (click)="openDetails(item)" [class.border-high]="item.severity === 'HIGH'">
+            <div class="item-left">
+              <span class="item-icon">{{ item.type === 'NIGHT_FLOW' ? '🌙' : '🤖' }}</span>
+              <div>
+                <strong>{{ item.type }}</strong>
+                <span class="item-mac"><code>{{ item.mac }}</code> · {{ item.zone || 'Tunis Centre' }}</span>
+              </div>
+            </div>
+            <div class="item-right">
+              <span class="badge" [ngClass]="item.severity === 'HIGH' ? 'badge-high' : 'badge-medium'">
+                {{ item.severity }}
+              </span>
+              <span class="item-arrow">→</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide-Over Inspection Drawer -->
+  <app-anomaly-drawer 
+    [anomaly]="selectedAnomaly()" 
+    (close)="closeDetails()"
+    (confirm)="confirmAnomaly($event)"
+    (markFalsePositive)="markFalsePositive($event)">
+  </app-anomaly-drawer>
+</section>

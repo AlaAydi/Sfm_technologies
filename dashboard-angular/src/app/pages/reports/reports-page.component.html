@@ -1,0 +1,119 @@
+<section class="reports-layout page-stack">
+  <!-- Report Toolbar -->
+  <div class="report-toolbar glass-card fade-in-up">
+    <div>
+      <h2 class="section-title">📊 Bilan Hydrique & Audit d'Efficacité Réseau</h2>
+      <p class="text-muted">Synthèse consolidée des volumes d'eau préservés et des interventions sur le Grand Tunis</p>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn-secondary" (click)="exportAudit()">📥 Exporter CSV</button>
+      <button class="btn-primary" (click)="printReport()">🖨️ Imprimer / PDF</button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="stats-row fade-in-up">
+    <div class="stat-card glass-card accent-green">
+      <div class="stat-icon" style="background: rgba(104, 211, 145, 0.15)">
+        <span>💧</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Volume d'Eau Préservé</span>
+        <span class="stat-value" style="color: var(--accent-green)">{{ totalSavedM3 }} m³</span>
+        <span class="stat-subtext">Grâce à la détection précoce IA</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-blue">
+      <div class="stat-icon" style="background: rgba(99, 179, 237, 0.15)">
+        <span>💰</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Économies Financières</span>
+        <span class="stat-value" style="color: var(--accent-blue)">{{ financialSavingsTND }} TND</span>
+        <span class="stat-subtext">Pertes d'exploitation évitées</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-orange">
+      <div class="stat-icon" style="background: rgba(246, 173, 85, 0.15)">
+        <span>⏱️</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Temps Moyen de Résolution</span>
+        <span class="stat-value" style="color: var(--accent-orange)">{{ mttrHours }}</span>
+        <span class="stat-subtext">MTTR de détection à colmatage</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card accent-blue">
+      <div class="stat-icon" style="background: rgba(79, 209, 197, 0.15)">
+        <span>🛡️</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Rendement de Réseau</span>
+        <span class="stat-value" style="color: var(--accent-cyan)">{{ networkEfficiency }}%</span>
+        <span class="stat-subtext">+4.2% vs période précédente</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MNF Trend Chart -->
+  <div class="chart-section glass-card fade-in-up">
+    <div class="chart-header">
+      <div>
+        <h3 class="section-title">🌙 Tendance du Débit Minimum Nocturne (MNF - 30 Jours)</h3>
+        <p class="text-muted" style="font-size: 12px;">Mesure entre 02h00 et 05h00 pour identifier les fuites invisibles de fond</p>
+      </div>
+    </div>
+    <div #mnfChartRef class="mnf-chart-body"></div>
+  </div>
+
+  <!-- Detailed Audit Breakdown Table -->
+  <div class="table-section glass-card fade-in-up">
+    <h3 class="section-title" style="margin-bottom: 16px;">📑 Répartition par Catégorie de Défaillance</h3>
+    <div class="table-wrapper">
+      <table class="anomalies-table">
+        <thead>
+          <tr>
+            <th>Type d'Incident</th>
+            <th>Nombre Détecté</th>
+            <th>Volume Moyen Perdu</th>
+            <th>Taux de Confirmation</th>
+            <th>Statut Opérationnel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="table-row">
+            <td><strong>🌙 Minimum Night Flow (MNF)</strong></td>
+            <td>18 cas</td>
+            <td>4.2 m³ / incident</td>
+            <td><span class="badge badge-low">94.4%</span></td>
+            <td>Surveillance continue active</td>
+          </tr>
+          <tr class="table-row">
+            <td><strong>🤖 Isolation Forest (IA ML)</strong></td>
+            <td>12 cas</td>
+            <td>5.8 m³ / incident</td>
+            <td><span class="badge badge-low">88.5%</span></td>
+            <td>Modèle entraîné & synchronisé</td>
+          </tr>
+          <tr class="table-row">
+            <td><strong>⚙️ Incohérence Vanne / Pression</strong></td>
+            <td>5 cas</td>
+            <td>1.9 m³ / incident</td>
+            <td><span class="badge badge-medium">80.0%</span></td>
+            <td>Étalonnage capteurs recommandé</td>
+          </tr>
+          <tr class="table-row">
+            <td><strong>📈 Dérive Prévisionnelle</strong></td>
+            <td>4 cas</td>
+            <td>2.6 m³ / incident</td>
+            <td><span class="badge badge-low">75.0%</span></td>
+            <td>Ajustement saisonnier en cours</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

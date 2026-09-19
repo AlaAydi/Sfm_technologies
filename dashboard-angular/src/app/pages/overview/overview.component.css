@@ -1,0 +1,136 @@
+.overview-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.visuals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.overview-lower-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.status-section,
+.incidents-section {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.incidents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.link-all {
+  font-size: 12px;
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+.link-all:hover { text-decoration: underline; }
+
+.status-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.status-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-row-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.status-label { font-weight: 600; color: var(--text-primary); }
+.status-count { color: var(--text-secondary); }
+
+.status-bar-wrapper {
+  height: 8px;
+  background: var(--bg-card-hover);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.status-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bar-high { background: var(--severity-high); box-shadow: 0 0 8px var(--severity-high); }
+.bar-medium { background: var(--severity-medium); }
+.bar-low { background: var(--severity-low); }
+
+.incidents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.incident-card-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--bg-card-hover);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.incident-card-item:hover {
+  border-color: var(--accent-blue);
+  transform: translateX(4px);
+}
+.incident-card-item.border-high {
+  border-left: 3px solid var(--severity-high);
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.item-icon { font-size: 18px; }
+.item-left strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+.item-mac {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.item-mac code {
+  color: var(--accent-cyan);
+  font-size: 10px;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.item-arrow {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+  .visuals-grid,
+  .overview-lower-grid {
+    grid-template-columns: 1fr;
+  }
+}

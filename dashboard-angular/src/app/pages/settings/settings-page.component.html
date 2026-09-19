@@ -1,0 +1,113 @@
+<section class="settings-layout page-stack">
+  <!-- Header -->
+  <div class="settings-header glass-card fade-in-up">
+    <div>
+      <h2 class="section-title">⚙️ Paramètres & Configuration de Détection</h2>
+      <p class="text-muted">Ajustez la sensibilité des modèles d'IA, les seuils d'alerte et les canaux de notification</p>
+    </div>
+    <button class="btn-primary" (click)="saveSettings()">💾 Sauvegarder les Paramètres</button>
+  </div>
+
+  <div class="settings-grid">
+    <!-- Thresholds card -->
+    <div class="glass-card settings-card fade-in-up">
+      <h3 class="card-title">🎯 Seuils de Détection Hydrodynamique</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Seuil Critique Débit Nocturne MNF (m³/h)</label>
+          <input type="number" step="0.1" class="input-field" [(ngModel)]="mnfThreshold">
+          <span class="form-hint">Déclenché si le débit 02h-05h dépasse cette valeur</span>
+        </div>
+
+        <div class="form-group">
+          <label>Sensibilité Isolation Forest (Contamination)</label>
+          <input type="number" step="0.01" min="0.01" max="0.2" class="input-field" [(ngModel)]="iforestContamination">
+          <span class="form-hint">Ratio de valeurs aberrantes attendues dans les séries</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Début Fenêtre Nocturne</label>
+            <input type="time" class="input-field" [(ngModel)]="nightStartHour">
+          </div>
+          <div class="form-group">
+            <label>Fin Fenêtre Nocturne</label>
+            <input type="time" class="input-field" [(ngModel)]="nightEndHour">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification & Audio card -->
+    <div class="glass-card settings-card fade-in-up">
+      <h3 class="card-title">🔔 Alertes & Notifications Sonores</h3>
+      <div class="form-grid">
+        <div class="toggle-row">
+          <div>
+            <strong>Carillon Sonore dans le Navigateur</strong>
+            <p class="form-hint">Émet un son discret en cas d'alerte fuite critique en direct</p>
+          </div>
+          <button class="btn-ghost" (click)="soundService.toggleSound()">
+            {{ soundService.enabled() ? '🔊 Activé' : '🔇 Désactivé' }}
+          </button>
+        </div>
+        <button class="btn-secondary btn-sm" (click)="testAlertSound()">
+          🎵 Tester le signal sonore
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="form-group">
+          <label>Email d'Astreinte pour Alertes Immédiates</label>
+          <input type="email" class="input-field" [(ngModel)]="recipientEmail">
+        </div>
+
+        <div class="form-group">
+          <label>Webhook URL (Dispatch Automatique)</label>
+          <input type="text" class="input-field" [(ngModel)]="webhookUrl">
+        </div>
+      </div>
+    </div>
+
+    <!-- Service Diagnostics card -->
+    <div class="glass-card settings-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="card-header-flex">
+        <h3 class="card-title">🩺 Diagnostics & État des Microservices</h3>
+        <button class="btn-ghost btn-sm" (click)="runDiagnostics()">🔄 Relancer le diagnostic</button>
+      </div>
+
+      <div class="diagnostic-grid">
+        <div class="diag-item">
+          <span class="diag-icon">☕</span>
+          <div class="diag-info">
+            <strong>Backend Core (Spring Boot :8082)</strong>
+            <span class="diag-desc">Base H2 / PostgreSQL, API REST & Broker WebSocket STOMP</span>
+          </div>
+          <span class="badge" [ngClass]="springBootStatus === 'online' ? 'badge-low' : springBootStatus === 'checking' ? 'badge-medium' : 'badge-high'">
+            {{ springBootStatus === 'online' ? 'EN LIGNE' : springBootStatus === 'checking' ? 'VÉRIFICATION...' : 'HORS-LIGNE (FALLBACK DÉMO)' }}
+          </span>
+        </div>
+
+        <div class="diag-item">
+          <span class="diag-icon">🐍</span>
+          <div class="diag-info">
+            <strong>Moteur IA (FastAPI :8001)</strong>
+            <span class="diag-desc">Isolation Forest, MNF, Modèles prédictifs Scikit-Learn</span>
+          </div>
+          <span class="badge" [ngClass]="fastApiStatus === 'online' ? 'badge-low' : fastApiStatus === 'checking' ? 'badge-medium' : 'badge-high'">
+            {{ fastApiStatus === 'online' ? 'EN LIGNE' : fastApiStatus === 'checking' ? 'VÉRIFICATION...' : 'HORS-LIGNE (MOCK LOCAL)' }}
+          </span>
+        </div>
+
+        <div class="diag-item">
+          <span class="diag-icon">🤖</span>
+          <div class="diag-info">
+            <strong>Assistant Google Gemini (Cloud LLM)</strong>
+            <span class="diag-desc">Modèle gemini-2.0-flash via clé API (.env)</span>
+          </div>
+          <span class="badge badge-low">PRÊT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

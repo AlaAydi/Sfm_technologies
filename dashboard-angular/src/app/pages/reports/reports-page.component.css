@@ -1,0 +1,49 @@
+.reports-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.report-toolbar {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.chart-section {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mnf-chart-body {
+  width: 100%;
+  min-height: 320px;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .report-toolbar button,
+  .sidebar,
+  .chat-fab,
+  .app-header {
+    display: none !important;
+  }
+  .glass-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+}

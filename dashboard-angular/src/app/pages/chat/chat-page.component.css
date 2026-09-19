@@ -1,0 +1,22 @@
+.chat-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chat-intro {
+  padding: 20px 24px;
+}
+
+.chat-intro-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.chat-page-container {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
