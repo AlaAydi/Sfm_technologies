@@ -1,0 +1,112 @@
+<!-- ==================== FLOATING MODE ==================== -->
+@if (mode === 'floating') {
+
+  @if (open()) {
+    <div class="chat-panel glass-card fade-in-up">
+      <div class="chat-header">
+        <div class="chat-header-brand">
+          <div class="chat-avatar">🤖</div>
+          <div>
+            <strong>Assistant Droppy</strong>
+            <span class="chat-status"><span class="live-dot"></span> IA connectée</span>
+          </div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="chat-icon-btn" (click)="clear()" title="Nouvelle conversation">↺</button>
+          <button class="chat-icon-btn" (click)="toggle()" title="Fermer">✕</button>
+        </div>
+      </div>
+
+      <div class="chat-messages" #scrollArea>
+        @for (msg of messages(); track $index) {
+          <div class="chat-msg" [class.msg-user]="msg.role === 'user'" [class.msg-assistant]="msg.role === 'assistant'">
+            @if (msg.role === 'assistant') { <span class="msg-avatar">🤖</span> }
+            <div class="msg-bubble">{{ msg.content }}</div>
+          </div>
+        }
+        @if (loading()) {
+          <div class="chat-msg msg-assistant">
+            <span class="msg-avatar">🤖</span>
+            <div class="msg-bubble typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="chat-suggestions">
+        @for (s of suggestions; track s) {
+          <button class="suggestion-chip" (click)="send(s)">💡 {{ s }}</button>
+        }
+      </div>
+
+      <div class="chat-input-row">
+        <input
+          class="input-field chat-input"
+          type="text"
+          [ngModel]="input()"
+          (ngModelChange)="input.set($event)"
+          (keyup.enter)="send()"
+          placeholder="Posez votre question..."
+        >
+        <button class="btn-primary chat-send" (click)="send()" [disabled]="!input().trim() || loading()">➤</button>
+      </div>
+    </div>
+  }
+
+  <button class="chat-fab" (click)="toggle()">
+    @if (open()) { ✕ } @else { 🤖 }
+  </button>
+
+}
+
+<!-- ==================== PAGE MODE ==================== -->
+@if (mode === 'page') {
+  <div class="chat-page glass-card">
+    <div class="chat-page-header">
+      <div class="chat-header-brand">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <strong>Assistant IA Droppy</strong>
+          <span class="chat-status"><span class="live-dot"></span> Gemini 2.0 Flash · Contexte backend en temps réel</span>
+        </div>
+      </div>
+      <button class="btn-ghost" (click)="clear()">↺ Nouvelle conversation</button>
+    </div>
+
+    <div class="chat-page-messages" #scrollArea>
+      @for (msg of messages(); track $index) {
+        <div class="chat-msg" [class.msg-user]="msg.role === 'user'" [class.msg-assistant]="msg.role === 'assistant'">
+          @if (msg.role === 'assistant') { <span class="msg-avatar">🤖</span> }
+          <div class="msg-bubble">{{ msg.content }}</div>
+        </div>
+      }
+      @if (loading()) {
+        <div class="chat-msg msg-assistant">
+          <span class="msg-avatar">🤖</span>
+          <div class="msg-bubble typing-dots"><span></span><span></span><span></span></div>
+        </div>
+      }
+    </div>
+
+    <div class="chat-page-footer">
+      <div class="chat-suggestions">
+        @for (s of suggestions; track s) {
+          <button class="suggestion-chip" (click)="send(s)">💡 {{ s }}</button>
+        }
+      </div>
+      <div class="chat-input-row">
+        <input
+          class="input-field chat-input"
+          type="text"
+          [ngModel]="input()"
+          (ngModelChange)="input.set($event)"
+          (keyup.enter)="send()"
+          placeholder="Posez votre question sur les anomalies, les prévisions, le système..."
+        >
+        <button class="btn-primary chat-send" (click)="send()" [disabled]="!input().trim() || loading()">Envoyer ➤</button>
+      </div>
+      <p class="chat-disclaimer">Les réponses sont générées par Gemini avec un contexte issu des données réelles du backend Droppy.</p>
+    </div>
+  </div>
+}
