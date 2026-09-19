@@ -1,7 +1,19 @@
-import { Component, OnInit, OnChanges, OnDestroy, Input, SimpleChanges } from '@angular/core';
+import { 
+  Component, 
+  OnInit, 
+  OnChanges, 
+  OnDestroy, 
+  Input, 
+  SimpleChanges, 
+  ElementRef, 
+  ViewChild, 
+  inject, 
+  effect 
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import ApexCharts from 'apexcharts';
 import { DroppyAnomaly } from '../../services/anomaly.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-leak-chart',
@@ -9,36 +21,92 @@ import { DroppyAnomaly } from '../../services/anomaly.service';
   imports: [CommonModule],
   template: `
     <div class="chart-container glass-card">
-      <h3 class="chart-title">📈 Analyse du Débit & Anomalies Surlignées</h3>
-      <div id="chart"></div>
+      <div class="chart-header">
+        <div>
+          <h3 class="chart-title">📈 Analyse du Débit & Détection d'Anomalies (24h)</h3>
+          <p class="chart-subtitle text-muted">Surveillance continue des zones de débit critique et seuil MNF</p>
+        </div>
+        <div class="chart-legend-pills">
+          <span class="pill-item"><span class="pill-dot" style="background:#0d9488"></span> Débit Normal</span>
+          <span class="pill-item"><span class="pill-dot" style="background:#ef4444"></span> Fuite Détectée</span>
+          <span class="pill-item"><span class="pill-dot" style="background:#f59e0b"></span> Seuil Alerte</span>
+        </div>
+      </div>
+      <div #chartElement class="chart-body"></div>
     </div>
   `,
   styles: [`
     .chart-container {
-      padding: 24px;
-      margin-bottom: 24px;
-      width: 100%;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+      min-height: 420px;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
     }
     .chart-title {
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 16px;
+      margin-bottom: 2px;
+    }
+    .chart-subtitle {
+      font-size: 12px;
+    }
+    .chart-legend-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pill-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .chart-body {
+      flex: 1;
+      width: 100%;
+      min-height: 320px;
     }
   `]
 })
 export class LeakChartComponent implements OnInit, OnChanges, OnDestroy {
   @Input() anomalies: DroppyAnomaly[] = [];
-private getSecureRandom(min: number, max: number): number {
-  const array = new Uint32Array(1);
-  crypto.getRandomValues(array);
+  @ViewChild('chartElement', { static: true }) chartElement!: ElementRef<HTMLDivElement>;
 
-  return min + (array[0] / 0xffffffff) * (max - min);
-}
   private chart: ApexCharts | null = null;
+  themeService = inject(ThemeService);
+
+  constructor() {
+    effect(() => {
+      this.themeService.theme();
+      if (this.chart) {
+        setTimeout(() => this.renderChart(), 50);
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.renderChart();
+    setTimeout(() => this.renderChart(), 80);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -50,63 +118,79 @@ private getSecureRandom(min: number, max: number): number {
   ngOnDestroy(): void {
     if (this.chart) {
       this.chart.destroy();
+      this.chart = null;
     }
   }
 
   private renderChart(): void {
+    if (!this.chartElement) return;
+
     if (this.chart) {
       this.chart.destroy();
+      this.chart = null;
     }
+
+    const isDark = this.themeService.isDark();
+    const foreColor = isDark ? '#a0aec0' : '#475569';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+    const primaryLineColor = isDark ? '#4fd1c5' : '#0d9488';
 
     const dataPoints: { x: number; y: number }[] = [];
     const baseTime = new Date().setHours(0, 0, 0, 0);
 
+    // Realistic 24-hour diurnal water consumption curve
+    const hourlyProfiles = [
+      0.8, 0.7, 0.6, 0.6, 0.7, 1.4, // 00h - 05h (Night minimum flow)
+      2.8, 4.2, 4.5, 3.8, 3.2, 3.0, // 06h - 11h (Morning peak)
+      3.4, 3.6, 2.9, 2.7, 2.8, 3.5, // 12h - 17h (Midday demand)
+      4.6, 4.8, 4.1, 3.2, 2.1, 1.2  // 18h - 23h (Evening peak)
+    ];
+
     for (let i = 0; i < 24; i++) {
       const time = baseTime + i * 3600 * 1000;
-const random = this.getSecureRandom(0.5, 1.3);
-let rate = random;
-      if (i >= 11 && i <= 14) rate += 2.5; 
-      if (i >= 18 && i <= 21) rate += 3.0; 
-      if (i >= 2 && i <= 5) rate += 1.8; 
-      
+      let rate = hourlyProfiles[i] + (Math.sin(i) * 0.15);
       dataPoints.push({ x: time, y: Number(rate.toFixed(2)) });
     }
 
+    // Build annotations based on real/simulated anomalies
     const xAnnotations: any[] = [];
     this.anomalies.forEach((anomaly) => {
-      if (anomaly.status === 'NEW') {
+      if (anomaly.status === 'NEW' || anomaly.status === 'CONFIRMED') {
         const startTimestamp = new Date(anomaly.startAt).getTime();
         const endTimestamp = new Date(anomaly.endAt).getTime();
-        
+        const isCrit = anomaly.severity === 'HIGH';
+
         xAnnotations.push({
           x: startTimestamp,
           x2: endTimestamp,
-          fillColor: anomaly.severity === 'HIGH' ? '#fc8181' : '#f6ad55',
-          opacity: 0.25,
+          fillColor: isCrit ? '#ef4444' : '#f59e0b',
+          opacity: 0.2,
           label: {
-            borderColor: anomaly.severity === 'HIGH' ? '#fc8181' : '#f6ad55',
+            borderColor: isCrit ? '#ef4444' : '#f59e0b',
             style: {
               color: '#fff',
-              background: anomaly.severity === 'HIGH' ? '#fc8181' : '#f6ad55',
+              background: isCrit ? '#ef4444' : '#f59e0b',
               fontSize: '10px',
+              fontWeight: '600',
               fontFamily: 'Inter'
             },
-            text: anomaly.type === 'NIGHT_FLOW' ? 'Fuite Nocturne (MNF)' : 'Anomalie IA'
+            text: anomaly.type === 'NIGHT_FLOW' ? 'Fuite Nocturne' : 'Anomalie IA'
           }
         });
       }
     });
 
     if (xAnnotations.length === 0) {
+      // Default alert window
       xAnnotations.push({
         x: baseTime + 2 * 3600 * 1000,
         x2: baseTime + 5 * 3600 * 1000,
-        fillColor: '#fc8181',
-        opacity: 0.25,
+        fillColor: '#ef4444',
+        opacity: 0.2,
         label: {
-          borderColor: '#fc8181',
-          style: { color: '#fff', background: '#fc8181', fontSize: '10px' },
-          text: 'Fuite Nocturne IA'
+          borderColor: '#ef4444',
+          style: { color: '#fff', background: '#ef4444', fontSize: '10px', fontWeight: 'bold' },
+          text: 'Seuil MNF Dépassé (2h-5h)'
         }
       });
     }
@@ -114,57 +198,72 @@ let rate = random;
     const options: any = {
       series: [
         {
-          name: 'Débit (L/min)',
+          name: 'Débit Mesuré (L/min)',
           data: dataPoints
         }
       ],
       chart: {
-        height: 320,
-        type: 'line',
-        foreColor: '#a0aec0',
+        height: 330,
+        type: 'area',
+        foreColor: foreColor,
         toolbar: { show: false },
-        animations: { enabled: true },
-        zoom: { enabled: false }
+        animations: { enabled: true }
       },
-      xaxis: {
-        type: 'datetime',
-        labels: {
-          datetimeUTC: false,
-          style: { colors: '#a0aec0', fontFamily: 'Inter' }
+      colors: [primaryLineColor],
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: isDark ? 0.45 : 0.35,
+          opacityTo: 0.05,
+          stops: [0, 95, 100]
         }
-      },
-      yaxis: {
-        title: { text: 'Débit (L/min)', style: { color: '#a0aec0', fontFamily: 'Inter' } },
-        labels: { style: { colors: '#a0aec0', fontFamily: 'Inter' } }
       },
       stroke: {
         curve: 'smooth',
         width: 3
       },
       dataLabels: { enabled: false },
-      legend: { show: false },
-      colors: ['#4fd1c5'],
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          datetimeUTC: false,
+          format: 'HH:mm',
+          style: { colors: foreColor, fontFamily: 'Inter' }
+        },
+        axisBorder: { color: gridColor },
+        axisTicks: { color: gridColor }
+      },
+      yaxis: {
+        title: { text: 'Débit (L/min)', style: { color: foreColor, fontFamily: 'Inter', fontWeight: 500 } },
+        labels: { style: { colors: foreColor, fontFamily: 'Inter' } }
+      },
+      grid: {
+        borderColor: gridColor,
+        strokeDashArray: 3
+      },
+      tooltip: {
+        theme: isDark ? 'dark' : 'light',
+        x: { format: 'dd MMM - HH:mm' }
+      },
       annotations: {
         xaxis: xAnnotations,
         yaxis: [
           {
-            y: 3.5,
-            borderColor: '#fc8181',
+            y: 3.8,
+            borderColor: '#ef4444',
             strokeDashArray: 4,
             label: {
-              borderColor: '#fc8181',
-              style: { color: '#fff', background: '#fc8181' },
-              text: 'Seuil Critique'
+              borderColor: '#ef4444',
+              style: { color: '#fff', background: '#ef4444', fontSize: '10px' },
+              text: 'Seuil Critique (3.8 L/min)'
             }
           }
         ]
       }
     };
 
-    const element = document.querySelector('#chart');
-    if (element) {
-      this.chart = new ApexCharts(element as any, options);
-      this.chart.render();
-    }
+    this.chart = new ApexCharts(this.chartElement.nativeElement, options);
+    this.chart.render();
   }
 }
