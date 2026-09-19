@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface DroppyAnomalyRepository extends JpaRepository<DroppyAnomaly, Long> {
@@ -15,6 +16,12 @@ public interface DroppyAnomalyRepository extends JpaRepository<DroppyAnomaly, Lo
     boolean existsByMacAndTypeAndStartAt(String mac, String type, LocalDateTime startAt);
     
     Optional<DroppyAnomaly> findFirstByMacOrderByStartAtDesc(String mac);
+
+    List<DroppyAnomaly> findTop10ByOrderByStartAtDesc();
+
+    long countByStatus(AnomalyStatus status);
+
+    long countBySeverity(String severity);
     
     @Query("SELECT a FROM DroppyAnomaly a WHERE " +
            "(:mac IS NULL OR a.mac = :mac) AND " +
