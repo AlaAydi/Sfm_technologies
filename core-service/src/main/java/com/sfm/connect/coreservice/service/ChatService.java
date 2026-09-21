@@ -15,18 +15,25 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Chat service that bridges the user's question to Google Gemini.
  * The Gemini API key is read ONLY from the .env file (server-side),
  * never from the Angular frontend. All project data passed to the model
  * is gathered from the backend (anomalies DB + FastAPI forecast proxy).
+ *
+ * Implements a resilient fallback chain over multiple Gemini models
+ * (handling 503 SERVICE_UNAVAILABLE, 429 RATE_LIMIT, 404, etc.).
  */
 @Service
 public class ChatService {
@@ -35,24 +42,79 @@ public class ChatService {
 
     private static final String GEMINI_API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s";
+    private static final int MAX_TRANSIENT_RETRIES = 2;
+    private static final long RETRY_DELAY_MILLIS = 2000L;
 
     @Autowired
     private DroppyAnomalyRepository repository;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private String geminiApiKey() {
-        // .env is located at the project root (where run_app.bat lives).
-        Dotenv dotenv = Dotenv.configure().directory("../").ignoreIfMissing().load();
-        String key = dotenv.get("GEMINI_API_KEY");
-        return key == null ? "" : key.trim();
+    public ChatService() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(8000); // 8 secondes de timeout connexion
+        factory.setReadTimeout(60000);   // Gemini peut prendre plus de temps avec les modèles de raisonnement
+        this.restTemplate = new RestTemplate(factory);
     }
 
-    private String geminiModel() {
-        Dotenv dotenv = Dotenv.configure().directory("../").ignoreIfMissing().load();
-        String model = dotenv.get("GEMINI_MODEL");
-        return (model == null || model.isBlank()) ? "gemini-2.0-flash" : model.trim();
+    private String geminiApiKey() {
+        String envKey = System.getenv("GEMINI_API_KEY");
+        if (envKey != null && !envKey.isBlank()) {
+            return envKey.trim();
+        }
+        for (String dir : List.of(".", "..", "../..")) {
+            try {
+                Dotenv dotenv = Dotenv.configure().directory(dir).ignoreIfMissing().load();
+                String key = dotenv.get("GEMINI_API_KEY");
+                if (key != null && !key.isBlank()) {
+                    return key.trim();
+                }
+            } catch (Exception ignored) {}
+        }
+        return "";
+    }
+
+    /**
+     * Builds an ordered list of Gemini models to try sequentially.
+     * Reads GEMINI_MODELS and GEMINI_MODEL from system env or .env file,
+     * and appends default stable models as fallbacks.
+     */
+    private List<String> geminiCandidateModels() {
+        Set<String> models = new LinkedHashSet<>();
+
+        // 1. Lire depuis les variables d'environnement système
+        addModels(models, System.getenv("GEMINI_MODELS"));
+
+        // 2. Lire depuis le fichier .env
+        for (String dir : List.of(".", "..", "../..")) {
+            try {
+                Dotenv dotenv = Dotenv.configure().directory(dir).ignoreIfMissing().load();
+                addModels(models, dotenv.get("GEMINI_MODELS"));
+            } catch (Exception ignored) {}
+        }
+
+        // 3. Modèles de secours par défaut (ordonnés pour maximiser la disponibilité)
+        List<String> defaultFallbackModels = List.of(
+            "gemini-3.6-flash",
+            "gemini-3.7-flash",
+            "gemini-3.8-flash",
+            "gemini-flash-latest"
+        );
+        models.addAll(defaultFallbackModels);
+
+        return new ArrayList<>(models);
+    }
+
+    private void addModels(Set<String> set, String rawValue) {
+        if (rawValue != null && !rawValue.isBlank()) {
+            for (String part : rawValue.split(",")) {
+                String trimmed = part.trim();
+                if (!trimmed.isEmpty()) {
+                    set.add(trimmed);
+                }
+            }
+        }
     }
 
     public String ask(String userMessage) {
@@ -63,9 +125,6 @@ public class ChatService {
 
         String context = buildSystemContext();
         String fullPrompt = context + "\n\nQuestion de l'utilisateur :\n" + userMessage;
-
-        String model = geminiModel();
-        String url = String.format(GEMINI_API_URL, model, apiKey);
 
         Map<String, Object> requestBody = Map.of(
                 "contents", List.of(
@@ -80,24 +139,74 @@ public class ChatService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        try {
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+        List<String> candidateModels = geminiCandidateModels();
+        String lastErrorMessage = "Aucune réponse obtenue.";
 
-            JsonNode root = objectMapper.readTree(response.getBody());
-            JsonNode candidates = root.path("candidates");
-            if (candidates.isArray() && candidates.size() > 0) {
-                JsonNode text = candidates.get(0).path("content").path("parts").get(0).path("text");
-                return text.asText("Je n'ai pas pu générer de réponse.");
+        for (String model : candidateModels) {
+            String url = String.format(GEMINI_API_URL, model, apiKey);
+            for (int attempt = 0; attempt <= MAX_TRANSIENT_RETRIES; attempt++) {
+                try {
+                    logger.info("Tentative d'appel à Gemini avec le modèle : [{}] (essai {})", model, attempt + 1);
+                    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+                    ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+
+                    JsonNode root = objectMapper.readTree(response.getBody());
+                    JsonNode candidates = root.path("candidates");
+                    if (candidates.isArray() && candidates.size() > 0) {
+                        JsonNode textNode = candidates.get(0).path("content").path("parts").get(0).path("text");
+                        if (!textNode.isMissingNode() && !textNode.asText().isBlank()) {
+                            logger.info("Réponse obtenue avec succès via le modèle : [{}]", model);
+                            return textNode.asText();
+                        }
+                    }
+
+                    JsonNode errorMsg = root.path("error").path("message");
+                    if (!errorMsg.isMissingNode()) {
+                        lastErrorMessage = "Modèle " + model + " : " + errorMsg.asText();
+                        logger.warn("Modèle [{}] a renvoyé une erreur : {}. Tentative avec le modèle de secours suivant...",
+                                model, errorMsg.asText());
+                    }
+                    break;
+                } catch (HttpStatusCodeException e) {
+                    lastErrorMessage = "Erreur HTTP " + e.getStatusCode() + " sur " + model;
+                        int statusCode = e.getStatusCode().value();
+                        if ((statusCode == 429 || statusCode == 503) && attempt < MAX_TRANSIENT_RETRIES) {
+                        logger.warn("Modèle [{}] temporairement indisponible (HTTP {}), nouvel essai dans {} ms",
+                            model, statusCode, RETRY_DELAY_MILLIS);
+                        waitBeforeRetry();
+                        continue;
+                    }
+                    logger.warn("Modèle [{}] indisponible ou en erreur (HTTP {}). Passage au modèle de secours...",
+                            model, e.getStatusCode());
+                    break;
+                } catch (RestClientException e) {
+                    logger.warn("Échec réseau sur le modèle [{}] : {}. Passage au modèle de secours...",
+                            model, e.getMessage());
+                    lastErrorMessage = "Erreur réseau sur " + model;
+                    if (attempt < MAX_TRANSIENT_RETRIES) {
+                        waitBeforeRetry();
+                        continue;
+                    }
+                    break;
+                } catch (Exception e) {
+                    logger.warn("Erreur inattendue sur le modèle [{}] : {}. Passage au modèle de secours...",
+                            model, e.getMessage());
+                    lastErrorMessage = "Erreur sur " + model;
+                    break;
+                }
             }
-            JsonNode errorMsg = root.path("error").path("message");
-            return "Erreur de l'API Gemini : " + errorMsg.asText("réponse inconnue");
-        } catch (RestClientException e) {
-            logger.error("Gemini API call failed", e);
-            return "Impossible de contacter l'API Gemini. Vérifiez votre connexion internet et la clé GEMINI_API_KEY.";
-        } catch (Exception e) {
-            logger.error("Gemini parsing failed", e);
-            return "Une erreur est survenue lors du traitement de la réponse Gemini.";
+        }
+
+        logger.error("Tous les modèles Gemini ont échoué. Dernier message : {}", lastErrorMessage);
+        return "⚠️ Le service IA est temporairement indisponible. Réessayez dans quelques instants.\n" +
+                "Si le problème persiste, vérifiez la configuration de GEMINI_MODELS dans le fichier .env.";
+    }
+
+    private void waitBeforeRetry() {
+        try {
+            Thread.sleep(RETRY_DELAY_MILLIS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
