@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dossier Technique & Soutenance — DROPPY AI (SFM Technologies)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 16mm;
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Inter', sans-serif;
+        font-size: 9pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 10pt;
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 10px;
+      page-break-after: always;
+    }
+
+    .cover-top {
+      border-bottom: 3px solid #0d9488;
+      padding-bottom: 24px;
+    }
+
+    .cover-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .brand-logo {
+      font-size: 38pt;
+    }
+
+    .company-title {
+      font-size: 18pt;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #0d9488;
+      text-transform: uppercase;
+    }
+
+    .company-sub {
+      font-size: 10pt;
+      font-weight: 500;
+      color: #64748b;
+      letter-spacing: 1px;
+    }
+
+    .cover-center {
+      margin: 60px 0;
+    }
+
+    .doc-tag {
+      display: inline-block;
+      background: rgba(13, 148, 136, 0.1);
+      color: #0d9488;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 10pt;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      border: 1px solid rgba(13, 148, 136, 0.25);
+    }
+
+    .cover-title {
+      font-size: 26pt;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #0f172a;
+      margin-bottom: 16px;
+    }
+
+    .cover-subtitle {
+      font-size: 13pt;
+      font-weight: 400;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      background: #f8fafc;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .meta-box strong {
+      display: block;
+      font-size: 8.5pt;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .meta-box span {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .cover-footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9pt;
+      color: #64748b;
+    }
+
+    /* Headings & Content */
+    h1 {
+      font-size: 18pt;
+      font-weight: 800;
+      color: #0f172a;
+      border-bottom: 2px solid #0d9488;
+      padding-bottom: 8px;
+      margin: 28px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 20px 0 10px;
+      border-left: 3px solid #0d9488;
+      padding-left: 10px;
+    }
+
+    h3 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #334155;
+      margin: 14px 0 8px;
+    }
+
+    p {
+      margin-bottom: 12px;
+      color: #334155;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin: 8px 0 14px 22px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5pt;
+      background: #f1f5f9;
+      color: #0d9488;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 14px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      line-height: 1.4;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 9pt;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 8pt;
+      letter-spacing: 0.5px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-ok { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-warn { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .badge-crit { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    .badge-info { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+
+    /* Callout Card */
+    .callout {
+      background: #f8fafc;
+      border-left: 4px solid #0d9488;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      border-top: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .callout strong {
+      color: #0f172a;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .stats-card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0 20px;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 16pt;
+      font-weight: 800;
+      color: #0d9488;
+      display: block;
+    }
+    .stat-lbl {
+      font-size: 7.5pt;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== COVER PAGE ==================== -->
+  <div class="cover-page">
+    <div class="cover-top">
+      <div class="cover-brand">
+        <span class="brand-logo">💧</span>
+        <div>
+          <div class="company-title">SFM TECHNOLOGIES</div>
+          <div class="company-sub">Écosystème IoT Industriel — SFM Connect</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-center">
+      <span class="doc-tag">Dossier Technique de Projet & Soutenance</span>
+      <h1 class="cover-title">Détection Intelligente de Fuites d'Eau<br>par Intelligence Artificielle & Microservices</h1>
+      <p class="cover-subtitle">
+        Conception et déploiement d'une architecture événementielle de bout en bout (Python FastAPI · Spring Boot 3 · Angular 19 · WebSocket STOMP) intégrant des modèles d'IA non supervisés et des règles hydrauliques métier.
+      </p>
+    </div>
+
+    <div>
+      <div class="cover-meta-grid">
+        <div class="meta-box">
+          <strong>Organisme d'Accueil</strong>
+          <span>SFM Technologies (Sfax, Tunisie)</span>
+        </div>
+        <div class="meta-box">
+          <strong>Sujet Officiel</strong>
+          <span>Module Droppy AI — SFM Connect</span>
+        </div>
+        <div class="meta-box">
+          <strong>Technologies Clés</strong>
+          <span>Python (Scikit-Learn), Spring Boot, Angular 19</span>
+        </div>
+        <div class="meta-box">
+          <strong>Période & Version</strong>
+          <span>Session Septembre 2026 · Version 2.0</span>
+        </div>
+      </div>
+
+      <div class="cover-footer" style="margin-top: 30px;">
+        <span>Document Confidentiel — Usage Interne & Jury de Soutenance</span>
+        <span>Réf : SFM-PFE-DROPPY-2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 1 : CONTEXTE ==================== -->
+  <div class="page-break"></div>
+
+  <h1>1. Contexte Industriel, Enjeux & Problématique</h1>
+
+  <p>
+    Dans le cadre du développement de sa suite <strong>SFM Connect</strong>, <strong>SFM Technologies</strong> conçoit et déploie des solutions connectées pour la gestion intelligente des réseaux d'utilités (eau potable, électricité, climatisation). Le module <strong>Droppy</strong> constitue le pilier dédié à la télé-relève de compteurs d'eau communicants (protocole MQTT) et à l'actionnement automatisé des vannes de sectorisation (DMA - District Metered Area).
+  </p>
+
+  <div class="callout">
+    <strong>Problématique Métier de la Gestion de l'Eau :</strong>
+    La détection classique des fuites dans les réseaux d'eau potable s'appuie traditionnellement sur des tournées d'inspection humaines ou sur de simples seuils fixes statiques. Ce fonctionnement génère des millions de mètres cubes perdus avant toute intervention : les micro-fuites persistantes, les dérives lentes de débit et les fuites nocturnes insidieuses échappent complètement aux règles statiques simples.
+  </div>
+
+  <h2>Objectifs Stratégiques Réalisés</h2>
+  <ul>
+    <li><strong>Transformation de la donnée brute en intelligence :</strong> Valoriser l'historique des millions de télé-mesures accumulées dans PostgreSQL pour entraîner des algorithmes d'apprentissage automatique.</li>
+    <li><strong>Détection précoce automatisée :</strong> Identifier en moins de 3 minutes les anomalies de consommation afin de réduire le temps moyen de résolution (MTTR).</li>
+    <li><strong>Tableau de bord de supervision de nouvelle génération :</strong> Fournir aux exploitants du réseau un outil décisionnel en temps réel combinant géolocalisation SIG, graphiques dynamiques, actionnement des vannes à distance et alertes sonores instantanées.</li>
+  </ul>
+
+  <div class="stats-card-grid">
+    <div class="stat-card">
+      <span class="stat-val">100%</span>
+      <span class="stat-lbl">Conformité Cahier des Charges</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val">29 / 29</span>
+      <span class="stat-lbl">User Stories Livrées</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val">&lt; 3 sec</span>
+      <span class="stat-lbl">Temps de Réponse Inférence</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val">94.6%</span>
+      <span class="stat-lbl">Rendement Réseau Obtenu</span>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 2 : ARCHITECTURE ==================== -->
+  <h1>2. Architecture Globale du Système Multi-Services</h1>
+
+  <p>
+    L'application repose sur une architecture microservices événementielle découplée, séparant la collecte de terrain, le calcul décisionnel par IA, l'orchestration des données d'entreprise et la restitution visuelle :
+  </p>
+
+  <pre>
+[ Compteurs d'Eau IoT ]  ──(MQTT / droppy/data)──>  [ collect-droppy ]
+                                                              │
+                                                        (Sauvegarde SQL)
+                                                              │
+                                                              ▼
+[ Base PostgreSQL « droppy » ] <──(JPA / Liquibase)── [ core-service Spring Boot 3 ]
+                                                              │
+                                                    (REST HTTP Scheduler)
+                                                              ▼
+                                                [ Microservice IA (FastAPI) ]
+                                                • Minimum Night Flow (MNF)
+                                                • Isolation Forest (ML)
+                                                • Incohérence Vanne / Débit
+                                                • Forecaster de Consommation
+                                                              │
+                                                (STOMP WebSocket /topic)
+                                                              ▼
+                                                [ Dashboard Angular 19 ]
+                                                (Dual Theme, Cartes, Alertes)
+  </pre>
+
+  <h3>Flux de Traitement Temps Réel :</h3>
+  <ol>
+    <li><strong>Collecte :</strong> Les compteurs émettent par MQTT leurs mesures (débit $L/\text{min}$, volume cumulé $m^3$, état de la vanne) toutes les 20 secondes.</li>
+    <li><strong>Orchestration périodique :</strong> Le backend Spring Boot interroge automatiquement toutes les 15 minutes le microservice IA via un scheduler pour chaque compteur actif.</li>
+    <li><strong>Inférence IA :</strong> FastAPI exécute le prétraitement et confronte les mesures aux 4 algorithmes de détection.</li>
+    <li><strong>Persistance & Diffusion :</strong> Spring Boot enregistre l'anomalie en base via JPA (`droppy_anomaly`) et diffuse immédiatement un message STOMP sur le canal `/topic/droppy/anomalies`.</li>
+    <li><strong>Alerte IHM :</strong> Le dashboard Angular reçoit l'événement en direct sans rafraîchir la page, déclenche un carillon sonore, un toast animé et met à jour les marqueurs radar de la carte.</li>
+  </ol>
+
+  <!-- ==================== SECTION 3 : IA ==================== -->
+  <div class="page-break"></div>
+
+  <h1>3. Microservice IA (Python 3.11 / FastAPI)</h1>
+
+  <p>
+    Hébergé sur le port <code>8001</code>, ce service implémente la chaîne complète de Data Science et de Machine Learning appliquée aux séries temporelles hydrauliques.
+  </p>
+
+  <h2>3.1 Pipeline de Prétraitement des Séries Temporelles</h2>
+  <ul>
+    <li><strong>Nettoyage et élimination du bruit :</strong> Filtrage des valeurs aberrantes et déduplication des horodatages.</li>
+    <li><strong>Rééchantillonnage temporel à 1 minute :</strong> Utilisation d'une interpolation linéaire pour normaliser les fréquences d'émission MQTT variables des capteurs IoT.</li>
+    <li><strong>Ingénierie des caractéristiques (Feature Engineering) :</strong>
+      <ul>
+        <li><code>hour_of_day</code> : Modélisation des cycles de consommation humaine sur 24 heures.</li>
+        <li><code>is_night</code> : Indicateur booléen isolant la fenêtre creuse d'inactivité ($23\text{h}00 - 05\text{h}00$).</li>
+        <li><code>rolling_mean_1h</code> & <code>rolling_std_1h</code> : Moyennes et écarts-types mobiles pour détecter les décrochages brutaux.</li>
+        <li>Normalisation MinMax sur l'échelle $[0, 1]$.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>3.2 Les 4 Algorithmes de Détection Hybrides</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Algorithme</th>
+        <th>Type de Détection</th>
+        <th>Principe & Règle Métier</th>
+        <th>Sévérité</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Minimum Night Flow (MNF)</strong></td>
+        <td>Règle Métier Hydraulique</td>
+        <td>Analyse le débit de fond entre 23h et 05h. Si le flux ne retombe pas sous le seuil critique nocturne ($> 0.5\,L/\text{min}$), une fuite continue est détectée.</td>
+        <td><span class="badge badge-crit">HIGH</span></td>
+      </tr>
+      <tr>
+        <td><strong>Incohérence Vanne / Débit</strong></td>
+        <td>Règle de Sécurité Physique</td>
+        <td>Détecte si un débit persistant $> 0.5\,L/\text{min}$ est mesuré pendant plus de 5 minutes alors que la vanne est déclarée fermée (état <code>OFF</code>).</td>
+        <td><span class="badge badge-warn">MEDIUM</span></td>
+      </tr>
+      <tr>
+        <td><strong>Isolation Forest</strong></td>
+        <td>Machine Learning Non Supervisé</td>
+        <td>Modèle Scikit-Learn entraîné sur 30 jours d'historique. Isole les signatures anormales multidimensionnelles sans étiquetage préalable. Sérialisé avec Joblib.</td>
+        <td><span class="badge badge-crit">HIGH / MED</span></td>
+      </tr>
+      <tr>
+        <td><strong>Forecaster de Consommation</strong></td>
+        <td>Série Temporelle Prédictive</td>
+        <td>Projette la consommation journalière sur un horizon de 7 à 30 jours avec bornes de confiance $\pm 15\%$. Détecte les dérives d'utilisation anormale.</td>
+        <td><span class="badge badge-info">SURVEILLANCE</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3.3 Endpoints REST Exposés par l'IA</h2>
+  <ul>
+    <li><code>GET /health</code> : Sonde de vérification de l'état du microservice (US-05).</li>
+    <li><code>POST /train/{mac}</code> : Réentraînement et sérialisation à chaud des modèles pour un compteur spécifique (US-09).</li>
+    <li><code>POST /predict/{mac}?from=...&to=...</code> : Endpoint unifié agrégeant les 4 algorithmes en moins de 3 secondes (US-11).</li>
+    <li><code>GET /forecast/{mac}?days=7</code> : Projection de consommation avec intervalles supérieur et inférieur (US-12).</li>
+  </ul>
+
+  <!-- ==================== SECTION 4 : SPRING BOOT ==================== -->
+  <div class="page-break"></div>
+
+  <h1>4. Backend d'Orchestration (Java 17 / Spring Boot 3)</h1>
+
+  <p>
+    Le backend <code>core-service</code> (port <code>8082</code>) sert de passerelle centrale garantissant l'intégrité transactionnelle et la gouvernance des données.
+  </p>
+
+  <h2>4.1 Modèle de Données & Migration Versionnée (Liquibase)</h2>
+  <p>
+    La persistance des anomalies détectées est assurée par l'entité JPA <code>DroppyAnomaly</code> dans la base PostgreSQL <code>droppy</code>. Les migrations versionnées Liquibase créent et maintiennent le schéma au démarrage du backend :
+  </p>
+  <ul>
+    <li><code>id</code> (Identifiant unique généré)</li>
+    <li><code>mac</code> (Adresse MAC matérielle du compteur d'eau)</li>
+    <li><code>type</code> (NIGHT_FLOW, FLOW_ANOMALY_IFOREST, VALVE_INCONSISTENCY, CONSUMPTION_DRIFT)</li>
+    <li><code>score</code> (Indice d'anomalie normalisé entre 0.0 et 1.0)</li>
+    <li><code>severity</code> (Sévérité opérationnelle : HIGH, MEDIUM, LOW)</li>
+    <li><code>start_at</code> & <code>end_at</code> (Plage temporelle exacte de l'incident)</li>
+    <li><code>status</code> (Cycle de vie : <code>NEW</code>, <code>CONFIRMED</code>, <code>FALSE_POSITIVE</code>)</li>
+  </ul>
+
+  <h2>4.2 API REST Complète & Scheduler</h2>
+  <ul>
+    <li><code>GET /api/v1/droppy/anomalies</code> : Liste paginée avec tri dynamique (direction asc/desc) et filtres multiples (MAC, sévérité, statut, dates début/fin) (US-15).</li>
+    <li><code>POST /api/v1/droppy/anomalies/{id}/status</code> : Transition d'état pour confirmer une fuite ou classer un faux positif (US-23).</li>
+    <li><code>POST /api/v1/droppy/anomalies/analyze/{mac}</code> : Déclencheur manuel d'analyse asynchrone sans blocage du thread HTTP (US-17).</li>
+    <li><code>GET /api/v1/droppy/anomalies/forecast/{mac}</code> : Proxy transparent vers le microservice IA.</li>
+  </ul>
+
+  <h2>4.3 Intégration de l'Assistant IA Google Gemini</h2>
+  <p>
+    Le contrôleur <code>ChatController.java</code> et le service <code>ChatService.java</code> connectent les modèles <strong>Google Gemini Flash configurés côté serveur</strong>. Le modèle utilisé est défini par <code>GEMINI_MODELS</code> dans <code>.env</code>. Le service retente les erreurs temporaires <code>429</code> et <code>503</code>, puis masque les détails du fournisseur dans l'interface. Le prompt est enrichi avec les métriques réelles de PostgreSQL (anomalies, statuts, sévérités et derniers événements).
+  </p>
+
+  <!-- ==================== SECTION 5 : ANGULAR ==================== -->
+  <div class="page-break"></div>
+
+  <h1>5. Dashboard Web Avancé (Angular 19 & TypeScript)</h1>
+
+  <p>
+    L'IHM client a été conçue pour combiner élégance visuelle, réactivité temps réel et rigueur fonctionnelle pour les exploitants.
+  </p>
+
+  <h2>5.1 Les 8 Modules & Vues du Dashboard</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Route</th>
+        <th>Module</th>
+        <th>Fonctionnalités Métier</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>/apercu</code></td>
+        <td><strong>Aperçu Exécutif</strong></td>
+        <td>4 cartes KPIs (Anomalies totales, Fuites critiques, Volume d'eau à risque, Nouvelles alertes), carte synoptique, courbe de débit 24h surlignée, bouton <em>"Simuler Fuite (WOW)"</em>.</td>
+      </tr>
+      <tr>
+        <td><code>/anomalies</code></td>
+        <td><strong>Registre des Fuites</strong></td>
+        <td>Tableau avec tri ascendant/descendant sur toutes les colonnes, filtres de dates début/fin, recherche globale, export <strong>CSV</strong> et <strong>JSON</strong> en 1 clic. Clic ligne $\rightarrow$ Tiroir d'analyse.</td>
+      </tr>
+      <tr>
+        <td><code>/carte</code></td>
+        <td><strong>Cartographie SIG</strong></td>
+        <td>Supervision des zones du Grand Tunis (Tunis Centre, Ariana, Marsa, Ben Arous), basculeur Plan / Satellite (Esri), anneaux radar rouges animés sur les fuites actives.</td>
+      </tr>
+      <tr>
+        <td><code>/previsions</code></td>
+        <td><strong>Prévisions IA</strong></td>
+        <td>Projections journalières sur 7, 14 ou 30 jours, bande de confiance min/max, calcul du pic de consommation et bouton d'entraînement du modèle avec feedback Toast.</td>
+      </tr>
+      <tr>
+        <td><code>/capteurs</code></td>
+        <td><strong>Parc IoT & Vannes</strong></td>
+        <td>Supervision détaillée de la flotte (Batterie, Signal RSSI, Pression en bar, Débit instantané). <strong>Actionneur de coupure d'urgence de la vanne à distance</strong>.</td>
+      </tr>
+      <tr>
+        <td><code>/rapports</code></td>
+        <td><strong>Bilan Hydrique & Audit</strong></td>
+        <td>Volume d'eau préservé ($m^3$), économies en Dinars Tunisiens (TND), temps moyen de résolution (MTTR), tendance MNF sur 30 jours et vue imprimable / PDF.</td>
+      </tr>
+      <tr>
+        <td><code>/parametres</code></td>
+        <td><strong>Configuration Système</strong></td>
+        <td>Seuils MNF et Isolation Forest, activation du carillon audio d'alerte, diagnostic de connexion en direct des 3 services (Spring, FastAPI, Gemini).</td>
+      </tr>
+      <tr>
+        <td><code>/chat</code></td>
+        <td><strong>Assistant IA Droppy</strong></td>
+        <td>Interface de dialogue avec suggestions en un clic, explications hydrauliques vulgarisées et préconisations de maintenance terrain.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5.2 Innovation Ergonomique : Dual-Theme & Accessibilité</h2>
+  <ul>
+    <li><strong>Mode Sombre (Cyber-Water) :</strong> Fond obsidian profond, vitrage glassmorphism, accentuations néon adaptées aux postes de contrôle de nuit.</li>
+    <li><strong>Mode Clair (Executive Clean) :</strong> Fond blanc immaculé et ardoise, contrastes parfaits pour la bureautique et les réunions de direction.</li>
+    <li><strong>Adaptation dynamique :</strong> Les tuiles Leaflet (CartoDB Dark vs Voyager) et les couleurs des graphiques ApexCharts se recalculent instantanément lors de la bascule.</li>
+  </ul>
+
+  <!-- ==================== SECTION 6 : CONFORMITE ==================== -->
+  <div class="page-break"></div>
+
+  <h1>6. Matrice de Validation des 29 User Stories</h1>
+
+  <p>
+    Ce tableau synthétise la réalisation rigoureuse de l'intégralité du Product Backlog défini dans le cahier des charges :
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Épic</th>
+        <th>ID</th>
+        <th>User Story du Cahier des Charges</th>
+        <th>Statut</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="4"><strong>ÉPIC 1 : Setup</strong></td>
+        <td>US-01</td>
+        <td>Configuration environnement de développement complet (JDK 17, Docker, Python).</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-02</td>
+        <td>Compréhension schéma Droppy & colonnes utiles pour l'IA.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-03</td>
+        <td>Analyse exploratoire des séries temporelles de débit.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-04</td>
+        <td>Backlog sprint et planification agile validée.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td rowspan="8"><strong>ÉPIC 2 : IA</strong></td>
+        <td>US-05</td>
+        <td>Structure microservice FastAPI avec Dockerfile (port 8001).</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-06</td>
+        <td>Module de chargement SQL / Fallback CSV haute fidélité.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-07</td>
+        <td>Pipeline de prétraitement (resampling 1 min, features temporelles).</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-08</td>
+        <td>Règle métier Minimum Night Flow (23h-5h, vanne OFF).</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-09</td>
+        <td>Modèle Isolation Forest (historique 30j, normalisation [0,1], Joblib).</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-10</td>
+        <td>Détection incohérence vanne/débit (> 0.5 L/min pendant > 5 min vanne OFF).</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-11</td>
+        <td>Endpoint unifié POST /predict/{mac} agrégeant tous les détecteurs.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-12</td>
+        <td>Modèle prévisionnel de consommation journalière (horizon 7-30j).</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td rowspan="5"><strong>ÉPIC 3 : Spring Boot</strong></td>
+        <td>US-13</td>
+        <td>Scheduler d'appel automatique vers l'IA toutes les 15 minutes.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-14</td>
+        <td>Entité JPA DroppyAnomaly et migration Liquibase versionnée.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-15</td>
+        <td>API REST Spring Boot paginée GET /api/v1/droppy/anomalies.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-16</td>
+        <td>Génération automatique d'alertes avec niveau de sévérité.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-17</td>
+        <td>Déclenchement asynchrone manuel de l'analyse POST /analyze/{mac}.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td rowspan="7"><strong>ÉPIC 4 : Angular</strong></td>
+        <td>US-18</td>
+        <td>Module dédié fuites accessible dans la navigation principale.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-19</td>
+        <td>Table paginée des anomalies avec filtres multiples et export CSV.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-20</td>
+        <td>Graphique ApexCharts avec zones de fuite surlignées en couleur.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-21</td>
+        <td>Carte Leaflet interactive avec code couleur selon l'état de fuite.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-22</td>
+        <td>Alertes temps réel WebSocket, toast notification et carillon sonore.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-23</td>
+        <td>Fiche détaillée avec calcul des pertes et boutons de validation d'état.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-24</td>
+        <td>Widget KPIs fuites, volume estimé perdu et rendement global.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td rowspan="5"><strong>ÉPIC 5 : Qualité</strong></td>
+        <td>US-25</td>
+        <td>Collection de tests d'intégration API.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-26</td>
+        <td>Validation du flux d'intégration de bout en bout.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-27</td>
+        <td>Documentation Swagger / OpenAPI disponible sur /docs.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-28</td>
+        <td>Rapport de stage complet et support de soutenance technique.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+      <tr>
+        <td>US-29</td>
+        <td>Démonstration fonctionnelle avec injecteur de fuites simulées.</td>
+        <td><span class="badge badge-ok">LIVRÉ</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ==================== SECTION 7 : SOUTENANCE ==================== -->
+  <div class="page-break"></div>
+
+  <h1>7. Déroulé Conseillé de la Démonstration (5 Minutes)</h1>
+
+  <div class="callout">
+    <strong>Conseil pour la Soutenance :</strong>
+    Adoptez une posture d'ingénieur orienté produit. Présentez l'application en vous mettant dans la peau d'un exploitant du réseau d'eau de la SONEDE / SFM Connect.
+  </div>
+
+  <h2>Étape 1 : Vue d'Ensemble & Métriques Clés (1 minute)</h2>
+  <ul>
+    <li>Ouvrez la page <code>/apercu</code>. Présentez le contexte : <em>"Droppy surveille en continu la télémétrie des compteurs de sectorisation pour détecter les anomalies invisibles à l'œil nu."</em></li>
+    <li>Pointez du doigt les 4 cartes KPIs : volume d'eau à risque, nombre de fuites critiques et santé globale du réseau.</li>
+  </ul>
+
+  <h2>Étape 2 : L'Événement Temps Réel — "L'Effet WOW" (1 minute)</h2>
+  <ul>
+    <li>Cliquez sur le bouton <strong>"⚡ Simuler Fuite (WOW)"</strong> dans l'en-tête de l'application.</li>
+    <li>Montrez à l'encadrant la réaction immédiate en chaîne :
+      <ol>
+        <li>Le <strong>carillon sonore</strong> retentit dans le navigateur.</li>
+        <li>Le <strong>Toast flottant</strong> s'affiche en haut à droite avec les détails de l'incident.</li>
+        <li>Le badge du menu d'alertes s'incrémente avec une animation de pulsation.</li>
+        <li>Sur la carte géographique, un <strong>cercle radar rouge clignotant</strong> apparaît instantanément sur la station touchée à Tunis.</li>
+      </ol>
+    </li>
+  </ul>
+
+  <h2>Étape 3 : Traitement Opérationnel & Diagnostic Détaillé (1 minute)</h2>
+  <ul>
+    <li>Naviguez vers <code>/anomalies</code>. Montrez la puissance du filtrage par dates et le tri par score d'anomalie.</li>
+    <li>Cliquez sur la fuite pour déployer le <strong>Tiroir Coulissant (Drawer)</strong> :
+      <ul>
+        <li>Montrez le calcul automatique du <strong>volume perdu en $m^3$</strong> et du <strong>coût en Dinars Tunisiens (TND)</strong>.</li>
+        <li>Présentez le diagnostic généré par l'IA et la recommandation d'intervention technique.</li>
+        <li>Cliquez sur <strong>"✓ Confirmer la Fuite"</strong> : l'anomalie passe immédiatement en statut traité.</li>
+      </ul>
+    </li>
+    <li>Cliquez sur <strong>"📥 Exporter CSV"</strong> pour prouver l'interopérabilité avec les outils SIG/Excel des exploitants.</li>
+  </ul>
+
+  <h2>Étape 4 : Actionnement IoT & Coupure de Vanne à Distance (1 minute)</h2>
+  <ul>
+    <li>Accédez au module <code>/capteurs</code>. Présentez les métriques matérielles : autonomie batterie, signal radio RSSI, pression réseau.</li>
+    <li>Sur le compteur en fuite critique, cliquez sur <strong>"🚫 Couper la Vanne"</strong> : observez la coupure d'urgence de l'arrivée d'eau, le débit retombant à $0.0\,L/\text{min}$ et la notification de mise en sécurité du secteur.</li>
+  </ul>
+
+  <h2>Étape 5 : Clôture & Excellence Visuelle (1 minute)</h2>
+  <ul>
+    <li>Basculez le bouton <strong>Soleil / Lune</strong> pour faire admirer le passage fluide en <strong>Light Mode</strong> immaculé.</li>
+    <li>Concluez : <em>"Ce projet valide les 29 User Stories du cahier des charges, intègre un microservice IA performant, un backend Spring Boot robuste et un dashboard Angular réactif prêt pour la mise en production."</em></li>
+  </ul>
+
+</body>
+</html>
