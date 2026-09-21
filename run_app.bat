@@ -22,6 +22,7 @@ echo.
 echo ========================================================
 echo [OK] Tous les modules ont ete lances !
 echo - Swagger API FastAPI : http://127.0.0.1:8001/docs
+echo - Swagger Backend Spring Boot : http://localhost:8082/swagger-ui/index.html
 echo - API Backend Spring Boot : http://127.0.0.1:8082/api/v1/droppy/anomalies
 echo - Application Web Angular : http://localhost:4200
 echo ========================================================
