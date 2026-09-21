@@ -70,7 +70,7 @@ export class ChatbotComponent implements OnInit {
         console.error('Chat error:', err);
         this.messages.update(list => [...list, {
           role: 'assistant',
-          content: '😕 Je n\u0027ai pas pu joindre le serveur Droppy. Vérifiez que le backend est démarré et que la clé GEMINI_API_KEY est configurée dans le fichier .env.'
+          content: this.getChatErrorMessage(err)
         }]);
         this.loading.set(false);
         this.scrollToBottom();
@@ -83,6 +83,13 @@ export class ChatbotComponent implements OnInit {
       role: 'assistant',
       content: '👋 Nouvelle conversation. Comment puis-je vous aider ?'
     }]);
+  }
+
+  private getChatErrorMessage(error: { status?: number }): string {
+    if (error.status === 503) {
+      return '⚠️ Le service IA est momentanément très sollicité. Réessayez dans quelques instants.';
+    }
+    return '😕 Je n\u0027ai pas pu joindre le serveur Droppy. Vérifiez que le backend est démarré et que GEMINI_API_KEY est configurée dans le fichier .env.';
   }
 
   private scrollToBottom(): void {
